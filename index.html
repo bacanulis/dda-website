@@ -143,7 +143,16 @@
     <section id="tim"><div class="container"><div class="section-head"><span class="kicker">People behind DDA</span><h2>Tim yang membangun bersama Anda.</h2><p>Kenali orang-orang di balik DDA. Foto dan profil resmi tim akan ditambahkan setelah materi tersedia.</p></div>
       <div class="team"><article class="person"><div class="avatar">CEO</div><h3>Chief Executive Officer</h3><p>Kepemimpinan, strategi, dan pengembangan bisnis.</p></article><article class="person"><div class="avatar">IT</div><h3>IT & Development</h3><p>Arsitektur teknologi dan pengembangan produk digital.</p></article><article class="person"><div class="avatar">MKT</div><h3>Marketing Team</h3><p>Pemasaran, hubungan pelanggan, dan kemitraan.</p></article></div>
     </div></section>
-    <section id="mitra"><div class="container"><div class="partner"><div><span class="kicker">DDA Partner Network</span><h2 style="font:700 32px 'Space Grotesk';margin:10px 0">Perluas peluang bersama DDA.</h2><p style="color:var(--muted);font-size:14px">Bantu hubungkan calon pelanggan dengan layanan DDA. Mitra memperoleh komisi berdasarkan proyek yang berhasil dan ketentuan kerja sama yang disepakati.</p><a class="btn" href="#kontak">Tertarik Menjadi Mitra ↗</a></div><div><div class="commission"><div><b>10%</b><small>Referral</small></div><div><b>15%</b><small>Sales Partner</small></div><div><b>20%</b><small>Strategic Partner</small></div></div><p class="project-note">Skema komisi usulan awal. Persentase final, dasar perhitungan, dan waktu pembayaran ditetapkan dalam perjanjian mitra.</p></div></div></div></section>
+    <section id="mitra"><div class="container"><div class="partner"><div><span class="kicker">DDA Partner Network</span><h2 style="font:700 32px 'Space Grotesk';margin:10px 0">Perluas peluang bersama DDA.</h2><p style="color:var(--muted);font-size:14px">Bantu hubungkan calon pelanggan dengan layanan DDA. Mitra memperoleh komisi berdasarkan proyek yang berhasil dan ketentuan kerja sama yang disepakati.</p><div class="form-card" style="text-align:left;margin-top:22px;max-width:620px">
+<form class="dda-form" id="partnerApplyForm">
+<label>Nama lengkap<input name="full_name" required maxlength="120" placeholder="Nama calon mitra"></label>
+<label>Email<input name="email" type="email" required maxlength="180" placeholder="nama@email.com"></label>
+<label>Nomor WhatsApp<input name="phone" type="tel" required maxlength="40" placeholder="08xxxxxxxxxx"></label>
+<label>Jenis kemitraan<select name="partner_type" required><option value="">Pilih jenis kemitraan</option><option value="referral">Referral Partner — 10%</option><option value="sales">Sales Partner — 15%</option><option value="strategic">Strategic Partner — 20%</option></select></label>
+<label>Pengalaman / alasan bergabung<textarea name="message" required minlength="10" maxlength="1500" placeholder="Ceritakan pengalaman dan alasan ingin bermitra dengan DDA"></textarea></label>
+<button class="btn" type="submit">Ajukan Kemitraan ↗</button><div class="form-status" id="partnerApplyStatus" role="status"></div>
+</form><p class="project-note">Pengajuan akan ditinjau Admin DDA. Kode referral hanya diterbitkan setelah disetujui. Komisi mengikuti perjanjian kemitraan dan dihitung dari pembayaran jasa DDA yang diterima.</p>
+</div></div><div><div class="commission"><div><b>10%</b><small>Referral</small></div><div><b>15%</b><small>Sales Partner</small></div><div><b>20%</b><small>Strategic Partner</small></div></div><p class="project-note">Skema komisi usulan awal. Persentase final, dasar perhitungan, dan waktu pembayaran ditetapkan dalam perjanjian mitra.</p></div></div></div></section>
 
     <section class="contact" id="kontak"><div class="container"><div class="contact-box"><span class="kicker">Let’s build something meaningful</span><h2>Apa ide yang ingin Anda wujudkan?</h2><p>Ceritakan kebutuhan, tantangan, atau peluang bisnis Anda. Tim DDA siap membantu mendiskusikan langkah digital berikutnya.</p>
       <div class="form-card" style="text-align:left;max-width:720px;margin:25px auto 0">
@@ -208,6 +217,30 @@
     submitDdaForm("ideaForm", "idea_submissions", "ideaStatus");
     submitDdaForm("investorForm", "investor_leads", "investorStatus");
     submitDdaForm("contactForm", "contact_messages", "contactStatus");
+    submitPartnerApplication();
+    async function submitPartnerApplication(){
+      const form=document.getElementById("partnerApplyForm");
+      const status=document.getElementById("partnerApplyStatus");
+      if(!form||!status)return;
+      form.addEventListener("submit",async(event)=>{
+        event.preventDefault();
+        const button=form.querySelector('button[type="submit"]');
+        const payload=Object.fromEntries(new FormData(form).entries());
+        Object.keys(payload).forEach(k=>{if(typeof payload[k]==="string")payload[k]=payload[k].trim();});
+        button.disabled=true;status.textContent="Mengirim pengajuan...";
+        try{
+          const response=await fetch(DDA_SUPABASE_URL+"/rest/v1/partner_applications",{
+            method:"POST",
+            headers:{"Content-Type":"application/json","apikey":DDA_SUPABASE_KEY,"Authorization":"Bearer "+DDA_SUPABASE_KEY,"Prefer":"return=minimal"},
+            body:JSON.stringify(payload)
+          });
+          if(!response.ok){const detail=await response.text();throw new Error(detail||"Gagal mengirim pengajuan.");}
+          form.reset();status.textContent="Pengajuan berhasil dikirim. Tim DDA akan meninjau dan menghubungi Anda.";
+        }catch(error){status.textContent="Pengajuan gagal dikirim. Silakan coba kembali.";console.error(error);}
+        finally{button.disabled=false;}
+      });
+    }
+
   </script>
 
   <script>
