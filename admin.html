@@ -128,6 +128,25 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
   </form>
  </div>
 </div>
+
+<div class="modalback" id="partnerModal" role="dialog" aria-modal="true" aria-labelledby="partnerModalTitle">
+ <div class="modal">
+  <div class="headrow"><h2 id="partnerModalTitle">Tambah Mitra DDA</h2><button class="btn" id="closePartnerModal" type="button">Tutup</button></div>
+  <form id="partnerForm">
+   <label for="partnerName">Nama lengkap *</label><input id="partnerName" required maxlength="120">
+   <label for="partnerEmail">Email</label><input id="partnerEmail" type="email" maxlength="180">
+   <label for="partnerPhone">Nomor WhatsApp *</label><input id="partnerPhone" required maxlength="40">
+   <label for="partnerType">Jenis kemitraan *</label>
+   <select id="partnerType"><option value="referral">Referral Partner — 10%</option><option value="sales">Sales Partner — 15%</option><option value="strategic">Strategic Partner — 20%</option></select>
+   <label for="partnerStatus">Status *</label>
+   <select id="partnerStatus"><option value="pending">Pending</option><option value="active">Aktif</option><option value="suspended">Ditangguhkan</option></select>
+   <p class="note">Kode referral dibuat otomatis. Hanya mitra berstatus Aktif yang boleh menggunakan kode.</p>
+   <p class="status" id="partnerFormStatus"></p>
+   <div class="modalactions"><button class="btn primary" id="savePartnerBtn" type="submit">Simpan Mitra</button></div>
+  </form>
+ </div>
+</div>
+
 <script>
 const SUPABASE_URL = "https://aoghuxbthbefbxbgruhn.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mVLgk9OY3xoNTPlZ0olQQQ_XOtKVsi6";
@@ -353,29 +372,37 @@ async function deleteProject(row){
  if(error){alert("Gagal menghapus proyek: "+error.message);return;}
  await loadTable("projects");
 }
+
 function partnerRate(type){return type==="strategic"?20:type==="sales"?15:10;}
 function partnerCode(name){
  const base=(name||"MITRA").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toUpperCase().replace(/[^A-Z0-9]+/g,"").slice(0,6)||"MITRA";
- return "DDA-"+base+"-"+Math.random().toString(36).slice(2,7).toUpperCase();
+ return "DDA-"+base+"-"+Math.random().toString(36).slice(2,8).toUpperCase();
 }
 async function loadPartnerApplications(){
  const target=$("partnerApplicationsTable");if(!target)return;
  target.innerHTML='<div class="empty">Memuat pengajuan...</div>';
  const {data,error}=await sb.from("partner_applications").select("*").order("created_at",{ascending:false}).limit(100);
- if(error){target.innerHTML='<div class="empty">Gagal memuat pengajuan. Pastikan SQL kemitraan sudah dijalankan.</div>';console.error(error);return;}
+ if(error){target.innerHTML='<div class="empty">Gagal memuat pengajuan. '+esc(error.message)+'</div>';return;}
  if(!data?.length){target.innerHTML='<div class="empty">Belum ada pengajuan mitra.</div>';return;}
- target.innerHTML='<table><thead><tr><th>Nama</th><th>Email</th><th>WhatsApp</th><th>Jenis</th><th>Status</th><th>Aksi</th></tr></thead><tbody>'+data.map(r=>'<tr><td>'+esc(r.full_name)+'</td><td>'+esc(r.email)+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.partner_type)+'</td><td>'+esc(r.status)+'</td><td>'+(r.status==="pending"?'<button class="actionbtn" data-approve-app="'+esc(r.id)+'">Setujui</button> <button class="actionbtn" data-reject-app="'+esc(r.id)+'">Tolak</button>':"—")+'</td></tr>').join("")+'</tbody></table>';
+ target.innerHTML='<table><thead><tr><th>Nama</th><th>Email</th><th>WhatsApp</th><th>Jenis</th><th>Status</th><th>Aksi</th></tr></thead><tbody>'+
+ data.map(r=>'<tr><td>'+esc(r.full_name)+'</td><td>'+esc(r.email)+'</td><td>'+esc(r.phone)+'</td><td>'+esc(r.partner_type)+'</td><td>'+esc(r.status)+'</td><td>'+(r.status==="pending"?'<button class="actionbtn" type="button" data-approve-app="'+esc(r.id)+'">Setujui</button> <button class="actionbtn" type="button" data-reject-app="'+esc(r.id)+'">Tolak</button>':"—")+'</td></tr>').join("")+
+ '</tbody></table>';
  target.querySelectorAll("[data-approve-app]").forEach(btn=>btn.addEventListener("click",()=>approvePartnerApplication(data.find(x=>String(x.id)===btn.dataset.approveApp))));
  target.querySelectorAll("[data-reject-app]").forEach(btn=>btn.addEventListener("click",()=>rejectPartnerApplication(btn.dataset.rejectApp)));
 }
 async function approvePartnerApplication(app){
  if(!app||app.status!=="pending")return;
- const rate=partnerRate(app.partner_type);
+ if(!confirm("Setujui pengajuan "+app.full_name+" sebagai mitra aktif?"))return;
  const code=partnerCode(app.full_name);
- const {error:insertError}=await sb.from("partners").insert({user_id:null,partner_code:code,full_name:app.full_name,phone:app.phone,email:app.email,partner_type:app.partner_type,commission_rate:rate,status:"active"});
+ const payload={user_id:app.user_id||null,partner_code:code,full_name:app.full_name,email:app.email,phone:app.phone,partner_type:app.partner_type,commission_rate:partnerRate(app.partner_type),status:"active"};
+ const {data:created,error:insertError}=await sb.from("partners").insert(payload).select("id,partner_code").single();
  if(insertError){alert("Gagal membuat mitra: "+insertError.message);return;}
  const {error:updateError}=await sb.from("partner_applications").update({status:"approved",reviewed_at:new Date().toISOString()}).eq("id",app.id);
- if(updateError){alert("Mitra dibuat, tetapi status pengajuan gagal diperbarui. Periksa data di Mitra DDA.");}
+ if(updateError){
+   alert("Mitra sudah dibuat dengan kode "+created.partner_code+", tetapi status pengajuan belum terbarui. Hubungi admin teknis sebelum mencoba menyetujui ulang.");
+   await loadTable("partners");await loadPartnerApplications();return;
+ }
+ alert("Mitra disetujui. Kode referral: "+created.partner_code);
  await loadPartnerApplications();await loadTable("partners");await loadOverview();
 }
 async function rejectPartnerApplication(id){
@@ -391,7 +418,7 @@ $("closePartnerModal").addEventListener("click",()=>$("partnerModal").classList.
 $("partnerModal").addEventListener("click",e=>{if(e.target===$("partnerModal"))$("partnerModal").classList.remove("open");});
 $("partnerForm").addEventListener("submit",async e=>{
  e.preventDefault();
- const type=$("partnerType").value, status=$("partnerStatus").value;
+ const type=$("partnerType").value,status=$("partnerStatus").value;
  const payload={user_id:null,partner_code:partnerCode($("partnerName").value),full_name:$("partnerName").value.trim(),email:$("partnerEmail").value.trim()||null,phone:$("partnerPhone").value.trim(),partner_type:type,commission_rate:partnerRate(type),status};
  $("savePartnerBtn").disabled=true;$("partnerFormStatus").textContent="Menyimpan mitra...";
  const {error}=await sb.from("partners").insert(payload);
@@ -399,7 +426,7 @@ $("partnerForm").addEventListener("submit",async e=>{
  if(error){$("partnerFormStatus").textContent="Gagal menyimpan: "+error.message;$("partnerFormStatus").classList.add("bad");return;}
  $("partnerFormStatus").classList.remove("bad");$("partnerFormStatus").textContent="Mitra berhasil ditambahkan.";
  await loadTable("partners");await loadOverview();
- setTimeout(()=>$("partnerModal").classList.remove("open"),700);
+ setTimeout(()=>$("partnerModal").classList.remove("open"),800);
 });
 async function startApp(session){
  $("loginPanel").classList.add("hidden");$("appPanel").classList.remove("hidden");$("logoutTop").classList.remove("hidden");
