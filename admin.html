@@ -57,7 +57,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
    <section id="ideas" class="section"><div class="card"><h2>Pengajuan Ide</h2><div class="toolbar"><input id="searchIdeas" placeholder="Cari nama, judul, email..."><button class="btn" onclick="loadTable('ideas')">Muat ulang</button></div><div class="tablewrap" id="ideasTable"></div></div></section>
    <section id="investors" class="section"><div class="card"><h2>Calon Investor</h2><div class="toolbar"><input id="searchInvestors" placeholder="Cari nama, minat, email..."><button class="btn" onclick="loadTable('investors')">Muat ulang</button></div><div class="tablewrap" id="investorsTable"></div></div></section>
    <section id="messages" class="section"><div class="card"><h2>Pesan Konsultasi</h2><div class="toolbar"><input id="searchMessages" placeholder="Cari nama, topik, pesan..."><button class="btn" onclick="loadTable('messages')">Muat ulang</button></div><div class="tablewrap" id="messagesTable"></div></div></section>
-   <section id="projects" class="section"><div class="card"><h2>Proyek DDA</h2><p class="small">Daftar proyek yang sudah dibuat. Pengelolaan proyek penuh disediakan untuk Admin dan CEO.</p><div class="tablewrap" id="projectsTable"></div></div></section>
+   <section id="projects" class="section"><div class="card"><div class="headrow"><div><h2>Proyek DDA</h2><p class="small">Kelola portofolio dan peluang bisnis DDA. Hanya Admin dan CEO yang dapat mengubah data.</p></div><button class="btn primary" id="addProjectBtn" type="button">+ Tambah Proyek</button></div><div class="tablewrap" id="projectsTable"></div></div></section>
    <section id="partners" class="section"><div class="card"><h2>Mitra DDA</h2><div class="tablewrap" id="partnersTable"></div></div></section>
    <section id="referrals" class="section"><div class="card"><h2>Referral</h2><div class="tablewrap" id="referralsTable"></div></div></section>
    <section id="commissions" class="section"><div class="card"><h2>Komisi Mitra</h2><div class="tablewrap" id="commissionsTable"></div></div></section>
@@ -107,6 +107,24 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
   </div>
  </div>
 </div>
+<div class="modalback" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
+ <div class="modal">
+  <div class="headrow"><h2 id="projectModalTitle">Tambah Proyek</h2><button class="btn" id="closeProjectModal" type="button">Tutup</button></div>
+  <form id="projectForm">
+   <label for="projectTitle">Nama proyek *</label><input id="projectTitle" required maxlength="160" placeholder="Contoh: Marketplace Kuliner">
+   <label for="projectSlug">Slug URL *</label><input id="projectSlug" required maxlength="180" placeholder="marketplace-kuliner">
+   <label for="projectCategory">Kategori</label><input id="projectCategory" maxlength="100" placeholder="Marketplace, AI, SaaS, Web3...">
+   <label for="projectDescription">Deskripsi proyek</label><input id="projectDescription" maxlength="2000" placeholder="Jelaskan konsep dan solusi proyek">
+   <label for="projectBudget">Estimasi anggaran (Rp)</label><input id="projectBudget" type="number" min="0" step="1" placeholder="50000000">
+   <label for="projectRevenue">Proyeksi pendapatan (Rp)</label><input id="projectRevenue" type="number" min="0" step="1" placeholder="10000000">
+   <label for="projectProfit">Proyeksi keuntungan (Rp)</label><input id="projectProfit" type="number" min="0" step="1" placeholder="3000000">
+   <label for="projectRisks">Catatan risiko</label><input id="projectRisks" maxlength="2000" placeholder="Asumsi, tantangan, dan risiko utama">
+   <label style="display:flex;align-items:center;gap:9px"><input id="projectPublished" type="checkbox" style="width:auto"> Publikasikan di website</label>
+   <p class="status" id="projectFormStatus"></p>
+   <div class="modalactions"><button class="btn primary" id="saveProjectBtn" type="submit">Simpan Proyek</button></div>
+  </form>
+ </div>
+</div>
 <script>
 const SUPABASE_URL = "https://aoghuxbthbefbxbgruhn.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mVLgk9OY3xoNTPlZ0olQQQ_XOtKVsi6";
@@ -132,6 +150,7 @@ function canSee(key){if(currentRole==="admin"||currentRole==="ceo")return true;r
 function setRoleUI(){
  $("roleLabel").textContent=currentRole==="admin"?"ADMIN UTAMA":currentRole==="ceo"?"CEO":"TIM MARKETING";
  const restricted=currentRole==="marketing";
+ $("addProjectBtn").classList.toggle("hidden",restricted);
  ["projects","partners","referrals","commissions"].forEach(k=>{const b=document.querySelector(`[data-target="${k}"]`);if(b)b.classList.toggle("hidden",restricted);});
  $("partnerStat").classList.toggle("hidden",restricted);
 }
@@ -154,10 +173,14 @@ async function loadTable(key){
  const rows=(data||[]).filter(r=>!query||JSON.stringify(r).toLowerCase().includes(query));
  if(!rows.length){target.innerHTML='<div class="empty">Belum ada data.</div>';return;}
  const headers=s.cols.map(c=>'<th>'+c[1]+'</th>').join("")+(['ideas','investors','messages'].includes(key)?'<th>Aksi</th>':"");
- target.innerHTML='<table><thead><tr>'+headers+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+s.cols.map(c=>'<td>'+fmt(r[c[0]])+'</td>').join("")+(key==="ideas"?'<td><button class="actionbtn" type="button" data-idea-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="investors"?'<td><button class="actionbtn" type="button" data-investor-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="messages"?'<td><button class="actionbtn" type="button" data-message-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':"")+'</tr>').join("")+'</tbody></table>';
+ target.innerHTML='<table><thead><tr>'+headers+(key==="projects"&&currentRole!=="marketing"?'<th>Aksi</th>':"")+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+s.cols.map(c=>'<td>'+fmt(r[c[0]])+'</td>').join("")+(key==="ideas"?'<td><button class="actionbtn" type="button" data-idea-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="investors"?'<td><button class="actionbtn" type="button" data-investor-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="messages"?'<td><button class="actionbtn" type="button" data-message-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="projects"&&currentRole!=="marketing"?'<td><button class="actionbtn" type="button" data-project-edit="'+esc(r.id)+'">Edit</button> <button class="actionbtn" type="button" data-project-delete="'+esc(r.id)+'">Hapus</button></td>':"")+'</tr>').join("")+'</tbody></table>';
  if(key==="ideas") target.querySelectorAll("[data-idea-id]").forEach(btn=>btn.addEventListener("click",()=>openIdea(rows.find(r=>String(r.id)===btn.dataset.ideaId))));
  if(key==="investors") target.querySelectorAll("[data-investor-id]").forEach(btn=>btn.addEventListener("click",()=>openInvestor(rows.find(r=>String(r.id)===btn.dataset.investorId))));
  if(key==="messages") target.querySelectorAll("[data-message-id]").forEach(btn=>btn.addEventListener("click",()=>openMessage(rows.find(r=>String(r.id)===btn.dataset.messageId))));
+ if(key==="projects"){
+  target.querySelectorAll("[data-project-edit]").forEach(btn=>btn.addEventListener("click",()=>openProject(rows.find(r=>String(r.id)===btn.dataset.projectEdit))));
+  target.querySelectorAll("[data-project-delete]").forEach(btn=>btn.addEventListener("click",()=>deleteProject(rows.find(r=>String(r.id)===btn.dataset.projectDelete))));
+ }
 }
 function openIdea(row){
  if(!row)return;
@@ -264,6 +287,68 @@ async function loadOverview(){
  for(const [table,id] of tables){const {count,error}=await sb.from(table).select("*",{count:"exact",head:true});$(id).textContent=error?"—":count;}
  if(currentRole!=="marketing"){const {count,error}=await sb.from("partners").select("*",{count:"exact",head:true});$("countPartners").textContent=error?"—":count;}
  $("overviewStatus").textContent="Pembaruan terakhir: "+new Date().toLocaleString("id-ID");
+}
+let editingProjectId = null;
+function openProject(row=null){
+ if(currentRole!=="admin"&&currentRole!=="ceo")return;
+ editingProjectId=row?row.id:null;
+ $("projectModalTitle").textContent=row?"Edit Proyek":"Tambah Proyek";
+ $("projectTitle").value=row?.title||"";
+ $("projectSlug").value=row?.slug||"";
+ $("projectSlug").dataset.manual="1";
+ $("projectCategory").value=row?.category||"";
+ $("projectDescription").value=row?.description||"";
+ $("projectBudget").value=row?.estimated_budget??"";
+ $("projectRevenue").value=row?.revenue_projection??"";
+ $("projectProfit").value=row?.profit_projection??"";
+ $("projectRisks").value=row?.risk_notes||"";
+ $("projectPublished").checked=!!row?.is_published;
+ $("projectFormStatus").textContent="";
+ $("projectFormStatus").classList.remove("bad");
+ $("projectModal").classList.add("open");
+}
+function makeSlug(value){
+ return value.toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+$("projectTitle").addEventListener("input",()=>{
+ if(!$("projectSlug").dataset.manual)$("projectSlug").value=makeSlug($("projectTitle").value);
+});
+$("projectSlug").addEventListener("input",()=>{$("projectSlug").dataset.manual="1";});
+$("addProjectBtn").addEventListener("click",()=>openProject());
+$("closeProjectModal").addEventListener("click",()=>$("projectModal").classList.remove("open"));
+$("projectModal").addEventListener("click",e=>{if(e.target===$("projectModal"))$("projectModal").classList.remove("open");});
+$("projectForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ if(currentRole!=="admin"&&currentRole!=="ceo")return;
+ const title=$("projectTitle").value.trim();
+ const slug=makeSlug($("projectSlug").value.trim());
+ if(!title||!slug){$("projectFormStatus").textContent="Nama proyek dan slug wajib diisi.";$("projectFormStatus").classList.add("bad");return;}
+ const payload={
+  title,slug,category:$("projectCategory").value.trim()||null,
+  description:$("projectDescription").value.trim()||null,
+  estimated_budget:$("projectBudget").value===""?null:Number($("projectBudget").value),
+  revenue_projection:$("projectRevenue").value===""?null:Number($("projectRevenue").value),
+  profit_projection:$("projectProfit").value===""?null:Number($("projectProfit").value),
+  risk_notes:$("projectRisks").value.trim()||null,
+  is_published:$("projectPublished").checked
+ };
+ $("saveProjectBtn").disabled=true;
+ $("projectFormStatus").textContent="Menyimpan proyek...";
+ const result=editingProjectId
+  ? await sb.from("projects").update(payload).eq("id",editingProjectId)
+  : await sb.from("projects").insert(payload);
+ $("saveProjectBtn").disabled=false;
+ if(result.error){$("projectFormStatus").textContent="Gagal menyimpan: "+result.error.message;$("projectFormStatus").classList.add("bad");return;}
+ $("projectFormStatus").classList.remove("bad");
+ $("projectFormStatus").textContent="Proyek berhasil disimpan.";
+ await loadTable("projects");
+ setTimeout(()=>$("projectModal").classList.remove("open"),700);
+});
+async function deleteProject(row){
+ if(!row||!confirm("Hapus proyek '"+(row.title||"")+"'? Tindakan ini tidak dapat dibatalkan."))return;
+ const {error}=await sb.from("projects").delete().eq("id",row.id);
+ if(error){alert("Gagal menghapus proyek: "+error.message);return;}
+ await loadTable("projects");
 }
 async function startApp(session){
  $("loginPanel").classList.add("hidden");$("appPanel").classList.remove("hidden");$("logoutTop").classList.remove("hidden");
