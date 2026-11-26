@@ -23,6 +23,22 @@
     .team{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.person{padding:24px;border:1px solid var(--line);border-radius:18px;background:#0d1b33}.avatar{width:76px;height:76px;border-radius:22px;background:linear-gradient(135deg,#246fc9,#7556d9);display:grid;place-items:center;font:700 25px "Space Grotesk";margin-bottom:18px}.person h3{margin:0;font:600 18px "Space Grotesk"}.person p{margin:5px 0 0;color:var(--muted);font-size:13px}
     .partner{border:1px solid #3e82d866;border-radius:22px;padding:34px;background:radial-gradient(circle at 90% 0,#344f9c55,transparent 38%),#0d1c35;display:grid;grid-template-columns:1.2fr .8fr;gap:25px;align-items:center}.commission{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.commission div{padding:15px 8px;text-align:center;border-radius:13px;background:#152b4b;border:1px solid var(--line)}.commission b{display:block;font:700 25px "Space Grotesk";color:#8bcaff}.commission small{font-size:10px;color:var(--muted)}
     .contact{background:radial-gradient(ellipse at 50% 100%,#254d9a55,transparent 55%)}.contact-box{text-align:center;padding:58px 25px;border:1px solid var(--line);border-radius:24px;background:#0d1c35}.contact-box h2{font:700 clamp(30px,4vw,44px) "Space Grotesk";margin:0 0 12px}.contact-box p{color:var(--muted);max-width:600px;margin:0 auto 25px}.footer{border-top:1px solid var(--line);padding:30px 0;color:#8294af;font-size:12px}.footer-row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+    .form-section{background:#08162b}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .form-card{padding:25px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#10213b,#0a172b)}
+    .form-card h3{font:600 21px "Space Grotesk";margin:0 0 8px}
+    .form-card>p{font-size:13px;color:var(--muted);margin:0 0 20px}
+    .dda-form{display:grid;gap:12px}
+    .dda-form label{display:grid;gap:6px;color:#c9d7ea;font-size:12px;font-weight:600}
+    .dda-form input,.dda-form select,.dda-form textarea{width:100%;padding:12px 13px;border:1px solid #6e8bb544;border-radius:10px;background:#08162b;color:#f4f7ff;font:14px "DM Sans";outline:none}
+    .dda-form input:focus,.dda-form select:focus,.dda-form textarea:focus{border-color:#398bff;box-shadow:0 0 0 3px #398bff22}
+    .dda-form textarea{min-height:100px;resize:vertical}
+    .dda-form button:disabled{opacity:.6;cursor:wait}
+    .form-status{font-size:12px;min-height:18px;color:#a8b6cc}
+    .form-status.ok{color:#6de0b7}.form-status.err{color:#ff9c9c}
+    @media(max-width:700px){.form-grid{grid-template-columns:1fr}.form-card{padding:20px}}
+
     @media(max-width:850px){.nav-links{display:none;position:absolute;top:76px;left:0;right:0;background:#09172d;padding:20px;flex-direction:column;align-items:flex-start;border-bottom:1px solid var(--line)}.nav-links.open{display:flex}.menu-btn{display:block}.nav-cta{display:none}.hero-grid,.split,.partner{grid-template-columns:1fr}.hero{padding:65px 0 55px}.visual{min-height:320px}.services,.op-grid,.portfolio,.team{grid-template-columns:repeat(2,1fr)}.trust-row{justify-content:center;text-align:center}.section-head{margin-bottom:28px}section{padding:65px 0}}
     @media(max-width:560px){.container{width:min(var(--max),calc(100% - 30px))}.services,.op-grid,.portfolio,.team{grid-template-columns:1fr}.hero h1{font-size:43px}.hero p{font-size:15px}.visual{min-height:280px}.orb{width:235px}.orb-core{font-size:70px}.fc1{right:-2px;top:15px}.fc2{left:-2px;bottom:15px}.fc3{right:0;bottom:0}.commission b{font-size:21px}.partner{padding:24px}.hero-actions .btn{width:100%}}
   </style>
@@ -30,7 +46,7 @@
 <body>
   <div class="nav-wrap"><div class="container"><nav>
     <a class="brand" href="#home"><span class="brand-mark">D</span><span>DDA<small>DEVELOPER DIGITAL ASAHAN</small></span></a>
-    <div class="nav-links" id="navLinks"><a href="#layanan">Layanan</a><a href="#solusi">Solusi Digital</a><a href="#peluang">Peluang Bisnis</a><a href="#proyek">Proyek</a><a href="#tim">Tim Kami</a><a href="#mitra">Mitra</a></div>
+    <div class="nav-links" id="navLinks"><a href="#layanan">Layanan</a><a href="#solusi">Solusi Digital</a><a href="#ide-anda">Kirim Ide</a><a href="#peluang">Peluang Bisnis</a><a href="#proyek">Proyek</a><a href="#tim">Tim Kami</a><a href="#mitra">Mitra</a></div>
     <a class="btn nav-cta" href="#kontak">Konsultasi</a><button class="menu-btn" id="menuBtn" aria-label="Buka menu">☰</button>
   </nav></div></div>
   <main>
@@ -62,6 +78,30 @@
         <div class="step"><span class="step-num">04</span><div><b>Ide menjadi produk digital</b><small>Validasi kebutuhan, susun konsep, lalu kembangkan.</small></div></div>
       </div></div>
     </div></section>
+
+    <section class="form-section" id="ide-anda"><div class="container">
+      <div class="section-head"><span class="kicker">Idea submission</span><h2>Punya ide yang ingin diwujudkan?</h2><p>Ceritakan gagasan Anda. Tim DDA akan meninjau kebutuhan awal dan menghubungi Anda untuk diskusi berikutnya.</p></div>
+      <div class="form-grid">
+        <div class="form-card"><h3>Kirim ide digital Anda</h3><p>Isi informasi dasar agar kami memahami ide dan kebutuhan pengembangan Anda.</p>
+          <form class="dda-form" id="ideaForm">
+            <label>Nama lengkap<input name="name" required minlength="2" maxlength="120" placeholder="Nama Anda"></label>
+            <label>Email<input name="email" type="email" required placeholder="nama@email.com"></label>
+            <label>Nomor WhatsApp<input name="phone" type="tel" placeholder="08xxxxxxxxxx"></label>
+            <label>Jenis bisnis / industri<input name="business_type" maxlength="120" placeholder="Contoh: kuliner, pendidikan, jasa"></label>
+            <label>Judul ide<input name="idea_title" required maxlength="180" placeholder="Nama atau ringkasan ide"></label>
+            <label>Deskripsi ide<textarea name="description" required minlength="10" placeholder="Ceritakan masalah, solusi, dan target pengguna..."></textarea></label>
+            <label>Perkiraan anggaran<select name="budget_range"><option value="">Belum ditentukan</option><option>Di bawah Rp5 juta</option><option>Rp5–15 juta</option><option>Rp15–50 juta</option><option>Rp50–100 juta</option><option>Di atas Rp100 juta</option></select></label>
+            <button class="btn" type="submit">Kirim Ide ↗</button><div class="form-status" id="ideaStatus" role="status"></div>
+          </form>
+        </div>
+        <div class="feature-panel"><h3>Apa yang terjadi setelah ide dikirim?</h3><p>Pengiriman formulir belum menjadi persetujuan proyek atau penawaran harga. Tim DDA akan memeriksa kebutuhan awal terlebih dahulu.</p><div class="steps">
+          <div class="step"><span class="step-num">01</span><div><b>Ide diterima</b><small>Informasi masuk ke sistem DDA.</small></div></div>
+          <div class="step"><span class="step-num">02</span><div><b>Peninjauan awal</b><small>Kami mempelajari kebutuhan, ruang lingkup, dan tujuan.</small></div></div>
+          <div class="step"><span class="step-num">03</span><div><b>Diskusi dan estimasi</b><small>Jika sesuai, tim menghubungi Anda untuk pembahasan lanjutan.</small></div></div>
+        </div></div>
+      </div>
+    </div></section>
+
     <section class="opportunities" id="peluang"><div class="container"><div class="section-head"><span class="kicker">Digital venture opportunities</span><h2>Punya modal? Temukan peluang di dunia digital.</h2><p>DDA membantu calon mitra dan investor mengeksplorasi ide bisnis digital, menyusun kebutuhan pengembangan, serta membuat proyeksi berdasarkan asumsi yang transparan.</p></div>
       <div class="op-grid">
         <article class="op-card"><div class="op-art">▦</div><div class="op-body"><span class="tag">PLATFORM DIGITAL</span><h3>Marketplace Niche</h3><p>Platform untuk mempertemukan penjual dan pembeli dalam segmen pasar tertentu.</p></div></article>
@@ -76,9 +116,72 @@
       <div class="team"><article class="person"><div class="avatar">CEO</div><h3>Chief Executive Officer</h3><p>Kepemimpinan, strategi, dan pengembangan bisnis.</p></article><article class="person"><div class="avatar">IT</div><h3>IT & Development</h3><p>Arsitektur teknologi dan pengembangan produk digital.</p></article><article class="person"><div class="avatar">MKT</div><h3>Marketing Team</h3><p>Pemasaran, hubungan pelanggan, dan kemitraan.</p></article></div>
     </div></section>
     <section id="mitra"><div class="container"><div class="partner"><div><span class="kicker">DDA Partner Network</span><h2 style="font:700 32px 'Space Grotesk';margin:10px 0">Perluas peluang bersama DDA.</h2><p style="color:var(--muted);font-size:14px">Bantu hubungkan calon pelanggan dengan layanan DDA. Mitra memperoleh komisi berdasarkan proyek yang berhasil dan ketentuan kerja sama yang disepakati.</p><a class="btn" href="#kontak">Tertarik Menjadi Mitra ↗</a></div><div><div class="commission"><div><b>10%</b><small>Referral</small></div><div><b>15%</b><small>Sales Partner</small></div><div><b>20%</b><small>Strategic Partner</small></div></div><p class="project-note">Skema komisi usulan awal. Persentase final, dasar perhitungan, dan waktu pembayaran ditetapkan dalam perjanjian mitra.</p></div></div></div></section>
-    <section class="contact" id="kontak"><div class="container"><div class="contact-box"><span class="kicker">Let’s build something meaningful</span><h2>Apa ide yang ingin Anda wujudkan?</h2><p>Ceritakan kebutuhan, tantangan, atau peluang bisnis Anda. Tim DDA siap membantu mendiskusikan langkah digital berikutnya.</p><a class="btn" href="https://wa.me/6280000000000?text=Halo%20DDA%2C%20saya%20ingin%20konsultasi%20tentang%20solusi%20digital." target="_blank" rel="noopener">Hubungi DDA via WhatsApp ↗</a><p class="project-note">Nomor WhatsApp pada tombol ini masih contoh dan harus diganti dengan nomor resmi DDA.</p></div></div></section>
+
+    <section class="contact" id="kontak"><div class="container"><div class="contact-box"><span class="kicker">Let’s build something meaningful</span><h2>Apa ide yang ingin Anda wujudkan?</h2><p>Ceritakan kebutuhan, tantangan, atau peluang bisnis Anda. Tim DDA siap membantu mendiskusikan langkah digital berikutnya.</p>
+      <div class="form-card" style="text-align:left;max-width:720px;margin:25px auto 0">
+        <form class="dda-form" id="contactForm">
+          <label>Nama<input name="name" required maxlength="120" placeholder="Nama Anda"></label>
+          <label>Email<input name="email" type="email" placeholder="nama@email.com"></label>
+          <label>Nomor WhatsApp<input name="phone" type="tel" placeholder="08xxxxxxxxxx"></label>
+          <label>Topik konsultasi<input name="subject" maxlength="180" placeholder="Contoh: Pembuatan marketplace"></label>
+          <label>Pesan<textarea name="message" required minlength="5" placeholder="Tuliskan kebutuhan Anda..."></textarea></label>
+          <button class="btn" type="submit">Kirim Pesan ↗</button><div class="form-status" id="contactStatus" role="status"></div>
+        </form>
+      </div>
+      <p class="project-note">Formulir ini mengirim pesan ke database DDA. Jangan mengirimkan kata sandi atau informasi rahasia.</p>
+    </div></div></section>
+
   </main>
   <footer class="footer"><div class="container footer-row"><div><a class="brand" href="#home"><span class="brand-mark">D</span><span>DDA<small>DEVELOPER DIGITAL ASAHAN</small></span></a><p>Membangun ide. Mengembangkan teknologi. Menciptakan peluang.</p></div><div>© <span id="year"></span> DDA. Hak cipta dilindungi.</div></div></footer>
+
+  <script>
+    // Kunci publishable boleh digunakan di frontend; RLS tetap melindungi tabel.
+    const DDA_SUPABASE_URL = "https://aoghuxbthbefbxbgruhn.supabase.co";
+    const DDA_SUPABASE_KEY = "sb_publishable_mVLgk9OY3xoNTPlZ0olQQQ_XOtKVsi6";
+    async function submitDdaForm(formId, table, statusId) {
+      const form = document.getElementById(formId);
+      const status = document.getElementById(statusId);
+      if (!form || !status) return;
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const button = form.querySelector('button[type="submit"]');
+        const payload = Object.fromEntries(new FormData(form).entries());
+        Object.keys(payload).forEach((key) => {
+          if (typeof payload[key] === "string") payload[key] = payload[key].trim();
+          if (payload[key] === "") payload[key] = null;
+        });
+        button.disabled = true;
+        status.className = "form-status";
+        status.textContent = "Mengirim data...";
+        try {
+          const response = await fetch(`${DDA_SUPABASE_URL}/rest/v1/${table}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": DDA_SUPABASE_KEY,
+              "Authorization": `Bearer ${DDA_SUPABASE_KEY}`,
+              "Prefer": "return=minimal"
+            },
+            body: JSON.stringify(payload)
+          });
+          if (!response.ok) throw new Error(await response.text() || `HTTP ${response.status}`);
+          form.reset();
+          status.className = "form-status ok";
+          status.textContent = "Berhasil dikirim. Terima kasih, tim DDA akan meninjau pesan Anda.";
+        } catch (error) {
+          console.error("DDA form error:", error);
+          status.className = "form-status err";
+          status.textContent = "Belum berhasil mengirim. Silakan coba lagi beberapa saat.";
+        } finally {
+          button.disabled = false;
+        }
+      });
+    }
+    submitDdaForm("ideaForm", "idea_submissions", "ideaStatus");
+    submitDdaForm("investorForm", "investor_leads", "investorStatus");
+    submitDdaForm("contactForm", "contact_messages", "contactStatus");
+  </script>
+
   <script>
     const menuBtn=document.getElementById('menuBtn'),navLinks=document.getElementById('navLinks');
     menuBtn.addEventListener('click',()=>navLinks.classList.toggle('open'));
