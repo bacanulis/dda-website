@@ -87,7 +87,14 @@
     @keyframes ddaScan{0%,15%{left:-35%}65%,100%{left:125%}}
     @media(prefers-reduced-motion:reduce){.brand-mark,.device-visual .orbit-one,.device-visual .orbit-two,.device-visual .laptop,.device-visual .phone,.device-visual .tech-chip,.device-visual .glow-ring,.device-visual .screen-wave:after{animation:none!important}}
 
-  </style>
+  
+    /* Portfolio artwork: visual yang sesuai dengan kategori proyek */
+    .project-visual{height:190px;display:block;overflow:hidden;background:#0b1931}
+    .project-visual img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .55s ease,filter .55s ease}
+    .project:hover .project-visual img{transform:scale(1.045);filter:saturate(1.12)}
+    @media(max-width:560px){.project-visual{height:185px}}
+    @media(prefers-reduced-motion:reduce){.project-visual img{transition:none}.project:hover .project-visual img{transform:none}}
+</style>
 </head>
 <body>
   <div class="nav-wrap"><div class="container"><nav>
@@ -199,7 +206,7 @@
 
     </div></section>
     <section id="proyek"><div class="container"><div class="section-head"><span class="kicker">Portfolio</span><h2>Ide yang dirancang untuk diwujudkan.</h2><p>Area portofolio DDA. Studi kasus dan proyek nyata akan ditampilkan di sini setelah mendapatkan persetujuan publikasi.</p></div>
-      <div class="portfolio"><article class="project"><div class="project-visual">▣</div><div class="project-content"><span class="label">WEB APPLICATION</span><h3>Platform Bisnis Digital</h3><p>Pengembangan sistem berbasis web untuk mengelola layanan dan transaksi.</p><div class="project-note">Contoh kategori proyek</div></div></article><article class="project"><div class="project-visual" style="background:radial-gradient(circle at 70% 25%,#a18bff55,transparent 30%),linear-gradient(135deg,#1b3565,#30204d)">◇</div><div class="project-content"><span class="label">MARKETPLACE</span><h3>Ekosistem Marketplace</h3><p>Platform yang menghubungkan pelanggan, merchant, dan penyedia layanan.</p><div class="project-note">Contoh kategori proyek</div></div></article><article class="project"><div class="project-visual" style="background:radial-gradient(circle at 70% 25%,#62e3d255,transparent 30%),linear-gradient(135deg,#12445a,#1d2753)">✧</div><div class="project-content"><span class="label">AI SOLUTION</span><h3>Otomasi Berbasis AI</h3><p>Solusi otomatisasi untuk membantu proses kerja dan interaksi pelanggan.</p><div class="project-note">Contoh kategori proyek</div></div></article></div>
+      <div class="portfolio"><article class="project"><div class="project-visual"><img src="assets/web-application.webp" alt="Ilustrasi dashboard aplikasi web pada laptop"></div><div class="project-content"><span class="label">WEB APPLICATION</span><h3>Platform Bisnis Digital</h3><p>Pengembangan sistem berbasis web untuk mengelola layanan dan transaksi.</p><div class="project-note">Contoh kategori proyek</div></div></article><article class="project"><div class="project-visual"><img src="assets/marketplace.webp" alt="Ilustrasi marketplace dengan keranjang belanja dan aplikasi ponsel"></div><div class="project-content"><span class="label">MARKETPLACE</span><h3>Ekosistem Marketplace</h3><p>Platform yang menghubungkan pelanggan, merchant, dan penyedia layanan.</p><div class="project-note">Contoh kategori proyek</div></div></article><article class="project"><div class="project-visual"><img src="assets/ai-automation.webp" alt="Ilustrasi kecerdasan buatan dan robot otomasi"></div><div class="project-content"><span class="label">AI SOLUTION</span><h3>Otomasi Berbasis AI</h3><p>Solusi otomatisasi untuk membantu proses kerja dan interaksi pelanggan.</p><div class="project-note">Contoh kategori proyek</div></div></article></div>
     </div></section>
     <section id="tim"><div class="container"><div class="section-head"><span class="kicker">People behind DDA</span><h2>Tim yang membangun bersama Anda.</h2><p>Kenali orang-orang di balik DDA. Foto dan profil resmi tim akan ditambahkan setelah materi tersedia.</p></div>
       <div class="team"><article class="person"><div class="avatar">CEO</div><h3>Chief Executive Officer</h3><p>Kepemimpinan, strategi, dan pengembangan bisnis.</p></article><article class="person"><div class="avatar">IT</div><h3>IT & Development</h3><p>Arsitektur teknologi dan pengembangan produk digital.</p></article><article class="person"><div class="avatar">MKT</div><h3>Marketing Team</h3><p>Pemasaran, hubungan pelanggan, dan kemitraan.</p></article></div>
