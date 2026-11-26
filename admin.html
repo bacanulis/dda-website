@@ -77,12 +77,27 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
   <div class="modalactions"><button class="btn primary" id="saveIdeaStatus" type="button">Simpan Status</button></div>
  </div>
 </div>
+<div class="modalback" id="investorModal" role="dialog" aria-modal="true" aria-labelledby="investorModalTitle">
+ <div class="modal">
+  <div class="headrow"><h2 id="investorModalTitle">Detail Calon Investor</h2><button class="btn" id="closeInvestorModal" type="button">Tutup</button></div>
+  <div id="investorDetails" class="detailgrid"></div>
+  <label for="investorStatusSelect">Status komunikasi</label>
+  <select id="investorStatusSelect">
+   <option value="new">Baru</option><option value="contacted">Sudah dihubungi</option>
+   <option value="meeting">Pertemuan dijadwalkan</option><option value="closed">Selesai</option>
+  </select>
+  <p class="status" id="investorUpdateStatus"></p>
+  <div class="modalactions"><button class="btn primary" id="saveInvestorStatus" type="button">Simpan Status</button>
+   <a class="btn" id="investorWhatsApp" href="#" target="_blank" rel="noopener">Hubungi via WhatsApp</a></div>
+ </div>
+</div>
 <script>
 const SUPABASE_URL = "https://aoghuxbthbefbxbgruhn.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mVLgk9OY3xoNTPlZ0olQQQ_XOtKVsi6";
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 let currentRole = null;
 let selectedIdeaId = null;
+let selectedInvestorId = null;
 const titles = {overview:"Ringkasan",ideas:"Pengajuan Ide",investors:"Calon Investor",messages:"Konsultasi",projects:"Proyek",partners:"Mitra",referrals:"Referral",commissions:"Komisi"};
 const specs = {
  ideas:{table:"idea_submissions",target:"ideasTable",search:"searchIdeas",cols:[["name","Nama"],["email","Email"],["phone","WhatsApp"],["idea_title","Judul ide"],["business_type","Bidang"],["budget_range","Anggaran"],["status","Status"],["created_at","Tanggal"]]},
@@ -121,9 +136,10 @@ async function loadTable(key){
  const query=s.search?($(s.search).value||"").toLowerCase():"";
  const rows=(data||[]).filter(r=>!query||JSON.stringify(r).toLowerCase().includes(query));
  if(!rows.length){target.innerHTML='<div class="empty">Belum ada data.</div>';return;}
- const headers=s.cols.map(c=>'<th>'+c[1]+'</th>').join("")+(key==="ideas"?'<th>Aksi</th>':"");
- target.innerHTML='<table><thead><tr>'+headers+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+s.cols.map(c=>'<td>'+fmt(r[c[0]])+'</td>').join("")+(key==="ideas"?'<td><button class="actionbtn" type="button" data-idea-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':"")+'</tr>').join("")+'</tbody></table>';
+ const headers=s.cols.map(c=>'<th>'+c[1]+'</th>').join("")+(['ideas','investors'].includes(key)?'<th>Aksi</th>':"");
+ target.innerHTML='<table><thead><tr>'+headers+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+s.cols.map(c=>'<td>'+fmt(r[c[0]])+'</td>').join("")+(key==="ideas"?'<td><button class="actionbtn" type="button" data-idea-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="investors"?'<td><button class="actionbtn" type="button" data-investor-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':"")+'</tr>').join("")+'</tbody></table>';
  if(key==="ideas") target.querySelectorAll("[data-idea-id]").forEach(btn=>btn.addEventListener("click",()=>openIdea(rows.find(r=>String(r.id)===btn.dataset.ideaId))));
+ if(key==="investors") target.querySelectorAll("[data-investor-id]").forEach(btn=>btn.addEventListener("click",()=>openInvestor(rows.find(r=>String(r.id)===btn.dataset.investorId))));
 }
 function openIdea(row){
  if(!row)return;
@@ -149,7 +165,44 @@ async function saveIdeaStatus(){
 }
 $("closeIdeaModal").addEventListener("click",()=>$("ideaModal").classList.remove("open"));
 $("ideaModal").addEventListener("click",e=>{if(e.target===$("ideaModal"))$("ideaModal").classList.remove("open");});
+
 $("saveIdeaStatus").addEventListener("click",saveIdeaStatus);
+
+function openInvestor(row){
+ if(!row)return;
+ selectedInvestorId=row.id;
+ const fields=[["Nama",row.name],["Email",row.email],["WhatsApp",row.phone],
+ ["Anggaran investasi",row.investment_budget],["Minat investasi",row.interests],
+ ["Pesan",row.message],["Tanggal masuk",row.created_at?new Date(row.created_at).toLocaleString("id-ID"):"—"],["Status",row.status]];
+ $("investorDetails").innerHTML=fields.map(([label,value])=>'<div class="detailitem"><small>'+esc(label)+'</small><p>'+esc(value)+'</p></div>').join("");
+ $("investorStatusSelect").value=row.status||"new";
+ $("investorUpdateStatus").textContent="";
+ $("investorUpdateStatus").classList.remove("bad");
+ const digits=String(row.phone||"").replace(/\\D/g,"");
+ const waNumber=digits.startsWith("0")?"62"+digits.slice(1):digits;
+ const wa=$("investorWhatsApp");
+ if(waNumber.length>=8){
+  wa.href="https://wa.me/"+waNumber+"?text="+encodeURIComponent("Halo "+(row.name||"")+", kami dari DDA ingin menindaklanjuti minat investasi Anda.");
+  wa.classList.remove("hidden");
+ }else{wa.href="#";wa.classList.add("hidden");}
+ $("investorModal").classList.add("open");
+}
+async function saveInvestorStatus(){
+ if(!selectedInvestorId)return;
+ const status=$("investorStatusSelect").value;
+ $("saveInvestorStatus").disabled=true;
+ $("investorUpdateStatus").textContent="Menyimpan perubahan...";
+ const {error}=await sb.from("investor_leads").update({status}).eq("id",selectedInvestorId);
+ $("saveInvestorStatus").disabled=false;
+ if(error){$("investorUpdateStatus").textContent="Gagal menyimpan: "+error.message;$("investorUpdateStatus").classList.add("bad");return;}
+ $("investorUpdateStatus").classList.remove("bad");
+ $("investorUpdateStatus").textContent="Status investor berhasil diperbarui.";
+ await loadTable("investors");await loadOverview();
+}
+$("closeInvestorModal").addEventListener("click",()=>$("investorModal").classList.remove("open"));
+$("investorModal").addEventListener("click",e=>{if(e.target===$("investorModal"))$("investorModal").classList.remove("open");});
+$("saveInvestorStatus").addEventListener("click",saveInvestorStatus);
+
 
 async function loadOverview(){
  const tables=[["idea_submissions","countIdeas"],["investor_leads","countInvestors"],["contact_messages","countMessages"]];
