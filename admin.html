@@ -13,28 +13,6 @@
 button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
 .wrap{max-width:1400px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#55d6ff,#7567ff);display:grid;place-items:center;color:#071326;font-weight:900;font-size:20px}.brand small{display:block;color:var(--muted);font-size:11px;letter-spacing:1.4px}.brand strong{font-size:18px}.btn{border:1px solid #31527a;border-radius:10px;padding:10px 14px;background:#15345a;color:white}.btn.primary{background:linear-gradient(100deg,#2679ee,#635cf5);border:0}.btn:disabled{opacity:.55}.login{max-width:430px;margin:8vh auto;background:#0d1d34;border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:0 20px 70px #0005}.login h1{margin:0 0 6px}.muted{color:var(--muted)}label{display:block;font-size:13px;color:#c7d7ea;margin:14px 0 6px}input,select{width:100%;padding:12px;border-radius:10px;border:1px solid #294664;background:#08172b;color:white;outline:none}input:focus,select:focus{border-color:var(--cyan)}.note{font-size:12px;color:var(--muted);line-height:1.5}.error{color:#ff9b9b;font-size:13px;min-height:20px}.shell{display:grid;grid-template-columns:230px 1fr;gap:20px}.side,.card{background:#0d1d34;border:1px solid var(--line);border-radius:16px}.side{padding:14px;height:max-content;position:sticky;top:14px}.side button{display:block;width:100%;text-align:left;margin:4px 0;background:transparent;border:0;color:#c6d7eb;padding:11px;border-radius:9px}.side button.active,.side button:hover{background:#183656;color:white}.main{min-width:0}.headrow{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 18px}.headrow h1{font-size:26px;margin:0}.role{color:#79d7ff;font-size:12px;text-transform:uppercase;letter-spacing:1px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}.stat{padding:17px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:28px;margin-top:8px}.card{padding:18px;margin-bottom:16px}.card h2{font-size:17px;margin:0 0 14px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}.toolbar input{max-width:280px}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:700px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #203751;font-size:13px;vertical-align:top}th{color:#9fb6d0;font-weight:600}td{color:#e0ebf8}.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#173b5c;color:#8edcff;font-size:11px}.empty{padding:25px;text-align:center;color:var(--muted)}.section{display:none}.section.active{display:block}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.small{font-size:12px;color:var(--muted)}.status{font-size:12px;min-height:18px;color:var(--green)}.status.bad{color:#ff9b9b}.actionbtn{padding:7px 10px;border-radius:8px;border:1px solid #31527a;background:#15345a;color:#fff;font-size:12px}.modalback{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modalback.open{display:flex}.modal{width:min(620px,100%);max-height:90vh;overflow:auto;background:#0d1d34;border:1px solid #31527a;border-radius:16px;padding:20px;box-shadow:0 20px 80px #0009}.detailgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detailitem{background:#102640;padding:11px;border-radius:10px;overflow-wrap:anywhere}.detailitem small{display:block;color:var(--muted);margin-bottom:5px}.detailitem p{margin:0;white-space:pre-wrap}.modalactions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}@media(max-width:520px){.detailgrid{grid-template-columns:1fr}}
 @media(max-width:850px){.wrap{padding:14px}.shell{grid-template-columns:1fr}.side{position:static;display:flex;overflow:auto;gap:4px}.side button{white-space:nowrap;width:auto}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}.headrow h1{font-size:21px}}
-
-/* Ukuran nominal ringkasan komisi dibuat lebih proporsional */
-.commission-stats .stat{padding:14px 12px;min-width:0}
-.commission-stats .stat strong{font-size:clamp(16px,1.45vw,21px);line-height:1.25;letter-spacing:-.35px;overflow-wrap:anywhere}
-.commission-stats .stat small{font-size:12px}
-@media(max-width:850px){.commission-stats .stat strong{font-size:clamp(15px,3.8vw,18px)}}
-@media(max-width:380px){.commission-stats .stat strong{font-size:14px;letter-spacing:-.45px}}
-
-/* Tampilan khusus tabel komisi pada layar HP */
-@media(max-width:700px){
- #commissionsTable,#commissionHistoryTable{overflow:visible}
- #commissionsTable table,#commissionHistoryTable table{min-width:0;width:100%;border-collapse:separate;border-spacing:0 10px}
- #commissionsTable thead,#commissionHistoryTable thead{display:none}
- #commissionsTable tbody,#commissionsTable tr,#commissionsTable td,#commissionHistoryTable tbody,#commissionHistoryTable tr,#commissionHistoryTable td{display:block;width:100%}
- #commissionsTable tr,#commissionHistoryTable tr{background:#102640;border:1px solid #294664;border-radius:13px;padding:10px 12px;margin-bottom:12px}
- #commissionsTable td,#commissionHistoryTable td{display:grid;grid-template-columns:minmax(112px,38%) minmax(0,1fr);gap:10px;padding:9px 2px;border-bottom:1px solid #29405b;font-size:13px;overflow-wrap:anywhere}
- #commissionsTable td:last-child,#commissionHistoryTable td:last-child{border-bottom:0}
- #commissionsTable td:before,#commissionHistoryTable td:before{font-weight:600;color:#8fa9c7;content:attr(data-label)}
- #commissionsTable td strong,#commissionHistoryTable td strong{font-size:15px;color:#fff}
- #commissionsTable .actionbtn{width:100%;min-height:42px}
-}
-
 </style>
 </head>
 <body>
@@ -85,16 +63,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
     <div class="card"><div class="headrow"><div><h2>Mitra DDA</h2><p class="small">Kelola mitra yang telah disetujui.</p></div><button class="btn primary" id="addPartnerBtn" type="button">+ Tambah Mitra</button></div><div class="tablewrap" id="partnersTable"></div></div>
    </section>
    <section id="referrals" class="section"><div class="card"><h2>Referral</h2><div class="tablewrap" id="referralsTable"></div></div></section>
-   <section id="commissions" class="section">
-    <div class="stats commission-stats">
-     <div class="card stat"><small>Komisi Pending</small><strong id="commissionPendingTotal">Rp 0</strong><div class="small" id="commissionPendingCount">0 transaksi</div></div>
-     <div class="card stat"><small>Komisi Disetujui</small><strong id="commissionApprovedTotal">Rp 0</strong><div class="small" id="commissionApprovedCount">0 transaksi</div></div>
-     <div class="card stat"><small>Komisi Dibayar</small><strong id="commissionPaidTotal">Rp 0</strong><div class="small" id="commissionPaidCount">0 transaksi</div></div>
-     <div class="card stat"><small>Total Komisi</small><strong id="commissionAllTotal">Rp 0</strong><div class="small" id="commissionAllCount">0 transaksi</div></div>
-    </div>
-    <div class="card"><h2>Komisi Mitra</h2><div class="tablewrap" id="commissionsTable"></div></div>
-    <div class="card"><h2>Riwayat Pembayaran Komisi</h2><p class="small">Daftar komisi yang sudah ditandai dibayar, termasuk tanggal dan referensi transfer.</p><div class="tablewrap" id="commissionHistoryTable"></div></div>
-   </section>
+   <section id="commissions" class="section"><div class="card"><h2>Komisi Mitra</h2><div class="tablewrap" id="commissionsTable"></div></div></section>
    <p class="note">Data dibaca langsung dari Supabase. Hak akses tetap ditentukan oleh Row Level Security, bukan hanya tampilan dashboard.</p>
   </main>
  </section>
@@ -243,7 +212,22 @@ async function loadTable(key){
  const rows=(data||[]).filter(r=>!query||JSON.stringify(r).toLowerCase().includes(query));
  if(!rows.length){target.innerHTML='<div class="empty">Belum ada data.</div>';return;}
  const headers=s.cols.map(c=>'<th>'+c[1]+'</th>').join("")+(['ideas','investors','messages'].includes(key)?'<th>Aksi</th>':"");
- target.innerHTML='<table><thead><tr>'+headers+(key==="projects"&&currentRole!=="marketing"?'<th>Aksi</th>':"")+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+s.cols.map(c=>'<td>'+fmt(r[c[0]])+'</td>').join("")+(key==="ideas"?'<td><button class="actionbtn" type="button" data-idea-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="investors"?'<td><button class="actionbtn" type="button" data-investor-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="messages"?'<td><button class="actionbtn" type="button" data-message-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="projects"&&currentRole!=="marketing"?'<td><button class="actionbtn" type="button" data-project-edit="'+esc(r.id)+'">Edit</button> <button class="actionbtn" type="button" data-project-delete="'+esc(r.id)+'">Hapus</button></td>':"")+'</tr>').join("")+'</tbody></table>';
+ const referralActions=key==="referrals"&&(currentRole==="admin"||currentRole==="ceo")?'<th>Perbarui status</th>':"";
+ target.innerHTML='<table><thead><tr>'+headers+(key==="projects"&&currentRole!=="marketing"?'<th>Aksi</th>':"")+referralActions+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+s.cols.map(c=>'<td>'+fmt(r[c[0]])+'</td>').join("")+(key==="ideas"?'<td><button class="actionbtn" type="button" data-idea-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="investors"?'<td><button class="actionbtn" type="button" data-investor-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="messages"?'<td><button class="actionbtn" type="button" data-message-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="projects"&&currentRole!=="marketing"?'<td><button class="actionbtn" type="button" data-project-edit="'+esc(r.id)+'">Edit</button> <button class="actionbtn" type="button" data-project-delete="'+esc(r.id)+'">Hapus</button></td>':"")+(key==="referrals"&&(currentRole==="admin"||currentRole==="ceo")?'<td><select data-ref-status="'+esc(r.id)+'" style="min-width:145px"><option value="lead" '+((r.status||"lead")==="lead"?"selected":"")+'>Lead Baru</option><option value="contacted" '+(r.status==="contacted"?"selected":"")+'>Dihubungi</option><option value="negotiating" '+(r.status==="negotiating"?"selected":"")+'>Negosiasi</option><option value="won" '+(r.status==="won"?"selected":"")+'>Deal / Berhasil</option><option value="lost" '+(r.status==="lost"?"selected":"")+'>Ditolak / Tidak lanjut</option></select> <button class="actionbtn" type="button" data-save-ref-status="'+esc(r.id)+'">Simpan</button></td>':"")+'</tr>').join("")+'</tbody></table>';
+ if(key==="referrals"&&(currentRole==="admin"||currentRole==="ceo")){
+  target.querySelectorAll("[data-save-ref-status]").forEach(btn=>btn.addEventListener("click",async()=>{
+   const id=btn.dataset.saveRefStatus;
+   const select=target.querySelector('[data-ref-status="'+id+'"]');
+   if(!select)return;
+   btn.disabled=true;
+   const oldLabel=btn.textContent;btn.textContent="Menyimpan...";
+   const {error}=await sb.from("referrals").update({status:select.value}).eq("id",id);
+   btn.disabled=false;btn.textContent=oldLabel;
+   if(error){alert("Gagal memperbarui status referral: "+error.message);return;}
+   alert("Status referral berhasil diperbarui.");
+   await loadTable("referrals");
+  }));
+ }
  if(key==="ideas") target.querySelectorAll("[data-idea-id]").forEach(btn=>btn.addEventListener("click",()=>openIdea(rows.find(r=>String(r.id)===btn.dataset.ideaId))));
  if(key==="investors") target.querySelectorAll("[data-investor-id]").forEach(btn=>btn.addEventListener("click",()=>openInvestor(rows.find(r=>String(r.id)===btn.dataset.investorId))));
  if(key==="messages") target.querySelectorAll("[data-message-id]").forEach(btn=>btn.addEventListener("click",()=>openMessage(rows.find(r=>String(r.id)===btn.dataset.messageId))));
@@ -356,45 +340,47 @@ function formatRupiah(value){
  return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(value)||0);
 }
 async function loadCommissions(){
- const target=$("commissionsTable"),historyTarget=$("commissionHistoryTable");
+ const target=$("commissionsTable");
  if(!target||!canSee("commissions"))return;
  target.innerHTML='<div class="empty">Memuat komisi...</div>';
- if(historyTarget)historyTarget.innerHTML='<div class="empty">Memuat riwayat pembayaran...</div>';
- const {data:rows,error}=await sb.from("commissions").select("*").order("created_at",{ascending:false}).limit(500);
- if(error){target.innerHTML='<div class="empty">Gagal memuat komisi: '+esc(error.message)+'</div>';if(historyTarget)historyTarget.innerHTML='<div class="empty">Riwayat gagal dimuat.</div>';return;}
- const list=rows||[];
- const groups={pending:list.filter(r=>String(r.status).toLowerCase()==="pending"),approved:list.filter(r=>String(r.status).toLowerCase()==="approved"&&!r.paid_at),paid:list.filter(r=>String(r.status).toLowerCase()==="paid"||!!r.paid_at)};
- const sum=a=>a.reduce((n,r)=>n+(Number(r.commission_amount)||0),0);
- const setStat=(prefix,a)=>{$(prefix+"Total").textContent=formatRupiah(sum(a));$(prefix+"Count").textContent=a.length+" transaksi";};
- setStat("commissionPending",groups.pending);setStat("commissionApproved",groups.approved);setStat("commissionPaid",groups.paid);
- $("commissionAllTotal").textContent=formatRupiah(sum(list));$("commissionAllCount").textContent=list.length+" transaksi";
- if(!list.length){target.innerHTML='<div class="empty">Belum ada data komisi.</div>';if(historyTarget)historyTarget.innerHTML='<div class="empty">Belum ada pembayaran komisi.</div>';return;}
- const partnerIds=[...new Set(list.map(r=>r.partner_id).filter(Boolean))];
- const referralIds=[...new Set(list.map(r=>r.referral_id).filter(Boolean))];
- const paymentIds=[...new Set(list.map(r=>r.referral_payment_id).filter(Boolean))];
+ const {data:rows,error}=await sb.from("commissions").select("*").order("created_at",{ascending:false}).limit(200);
+ if(error){target.innerHTML='<div class="empty">Gagal memuat komisi: '+esc(error.message)+'</div>';return;}
+ if(!rows?.length){target.innerHTML='<div class="empty">Belum ada data komisi.</div>';return;}
+ const partnerIds=[...new Set(rows.map(r=>r.partner_id).filter(Boolean))];
+ const referralIds=[...new Set(rows.map(r=>r.referral_id).filter(Boolean))];
+ const paymentIds=[...new Set(rows.map(r=>r.referral_payment_id).filter(Boolean))];
  const [partnersRes,referralsRes,paymentsRes]=await Promise.all([
   partnerIds.length?sb.from("partners").select("id,full_name,partner_code").in("id",partnerIds):Promise.resolve({data:[]}),
   referralIds.length?sb.from("referrals").select("id,customer_name,project_type").in("id",referralIds):Promise.resolve({data:[]}),
   paymentIds.length?sb.from("referral_payments").select("id,payment_reference,gross_amount,third_party_cost,payment_date").in("id",paymentIds):Promise.resolve({data:[]})
  ]);
  if(partnersRes.error||referralsRes.error||paymentsRes.error){
-  target.innerHTML='<div class="empty">Komisi terbaca, tetapi detail mitra/pembayaran gagal dimuat. Periksa izin SELECT RLS untuk Admin/CEO.</div>';if(historyTarget)historyTarget.innerHTML='<div class="empty">Detail riwayat belum dapat dimuat.</div>';return;
+  target.innerHTML='<div class="empty">Komisi terbaca, tetapi detail mitra/pembayaran gagal dimuat. Periksa izin SELECT RLS untuk Admin/CEO.</div>';return;
  }
  const partners=new Map((partnersRes.data||[]).map(x=>[x.id,x]));
  const referrals=new Map((referralsRes.data||[]).map(x=>[x.id,x]));
  const payments=new Map((paymentsRes.data||[]).map(x=>[x.id,x]));
- const rowHtml=(r,history=false)=>{
+ target.innerHTML='<table><thead><tr><th>Mitra</th><th>Pelanggan / Proyek</th><th>Dasar pembayaran</th><th>Nilai komisi</th><th>Status</th><th>Tanggal</th><th>Aksi</th></tr></thead><tbody>'+
+ rows.map(r=>{
   const partner=partners.get(r.partner_id)||{},ref=referrals.get(r.referral_id)||{},pay=payments.get(r.referral_payment_id)||{};
   const status=String(r.status||"pending").toLowerCase();
-  const action=currentRole==="admin"||currentRole==="ceo"?(status==="pending"?'<button class="actionbtn" data-approve-commission="'+esc(r.id)+'">Setujui</button>':status==="approved"&&!r.paid_at?'<button class="actionbtn" data-pay-commission="'+esc(r.id)+'">Catat Pembayaran</button>':"—"):"—";
-  if(history)return '<tr><td data-label="Mitra">'+esc(partner.full_name||"Mitra")+'<div class="small">'+esc(partner.partner_code||"")+'</div></td><td data-label="Nilai komisi"><strong>'+formatRupiah(r.commission_amount)+'</strong></td><td data-label="Tanggal dibayar">'+fmt(r.paid_at||r.created_at)+'</td><td data-label="Referensi transfer">'+esc(r.payment_reference||"—")+'</td><td data-label="Catatan">'+esc(r.payment_notes||"—")+'</td></tr>';
-  return '<tr><td data-label="Mitra">'+esc(partner.full_name||"Mitra")+'<div class="small">'+esc(partner.partner_code||"")+'</div></td><td data-label="Pelanggan / Proyek">'+esc(ref.customer_name||"—")+'<div class="small">'+esc(ref.project_type||"")+'</div></td><td data-label="Dasar pembayaran">'+esc(pay.payment_reference||"—")+'<div class="small">Masuk: '+formatRupiah(pay.gross_amount)+' · Biaya pihak ketiga: '+formatRupiah(pay.third_party_cost)+'</div></td><td data-label="Nilai komisi"><strong>'+formatRupiah(r.commission_amount)+'</strong></td><td data-label="Status"><span class="pill">'+esc(status)+'</span>'+(r.payment_reference?'<div class="small">Transfer: '+esc(r.payment_reference)+'</div>':"")+'</td><td data-label="Tanggal">'+fmt(r.created_at)+(r.paid_at?'<div class="small">Dibayar '+esc(fmt(r.paid_at))+'</div>':"")+'</td><td data-label="Aksi">'+action+'</td></tr>';
- };
- target.innerHTML='<table class="commission-table"><thead><tr><th>Mitra</th><th>Pelanggan / Proyek</th><th>Dasar pembayaran</th><th>Nilai komisi</th><th>Status</th><th>Tanggal</th><th>Aksi</th></tr></thead><tbody>'+list.map(r=>rowHtml(r)).join("")+'</tbody></table>';
- const paid=groups.paid;
- if(historyTarget)historyTarget.innerHTML=paid.length?'<table class="commission-table"><thead><tr><th>Mitra</th><th>Nilai komisi</th><th>Tanggal dibayar</th><th>Referensi transfer</th><th>Catatan</th></tr></thead><tbody>'+paid.map(r=>rowHtml(r,true)).join("")+'</tbody></table>':'<div class="empty">Belum ada pembayaran komisi yang tercatat.</div>';
+  const action=currentRole==="admin"||currentRole==="ceo"
+   ? (status==="pending"?'<button class="actionbtn" data-approve-commission="'+esc(r.id)+'">Setujui</button>':status==="approved"&&!r.paid_at?'<button class="actionbtn" data-pay-commission="'+esc(r.id)+'">Catat Pembayaran</button>':"—")
+   : "—";
+  const basis=pay.payment_reference||"—";
+  const paid=r.paid_at?"Dibayar "+fmt(r.paid_at):"";
+  return '<tr><td>'+esc(partner.full_name||"Mitra")+'<div class="small">'+esc(partner.partner_code||"")+'</div></td>'+
+   '<td>'+esc(ref.customer_name||"—")+'<div class="small">'+esc(ref.project_type||"")+'</div></td>'+
+   '<td>'+esc(basis)+'<div class="small">Masuk: '+formatRupiah(pay.gross_amount)+' · Biaya pihak ketiga: '+formatRupiah(pay.third_party_cost)+'</div></td>'+
+   '<td><strong>'+formatRupiah(r.commission_amount)+'</strong></td>'+
+   '<td><span class="pill">'+esc(status)+'</span>'+(r.payment_reference?'<div class="small">Transfer: '+esc(r.payment_reference)+'</div>':"")+'</td>'+
+   '<td>'+fmt(r.created_at)+(paid?'<div class="small">'+esc(paid)+'</div>':"")+'</td><td>'+action+'</td></tr>';
+ }).join("")+'</tbody></table>';
  target.querySelectorAll("[data-approve-commission]").forEach(btn=>btn.addEventListener("click",()=>approveCommission(btn.dataset.approveCommission)));
- target.querySelectorAll("[data-pay-commission]").forEach(btn=>btn.addEventListener("click",()=>{const row=list.find(x=>String(x.id)===btn.dataset.payCommission);if(row)openCommissionPayment(row);}));
+ target.querySelectorAll("[data-pay-commission]").forEach(btn=>btn.addEventListener("click",()=>{
+  const row=rows.find(x=>String(x.id)===btn.dataset.payCommission);
+  if(row)openCommissionPayment(row);
+ }));
 }
 async function approveCommission(id){
  if(currentRole!=="admin"&&currentRole!=="ceo")return;
