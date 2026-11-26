@@ -214,7 +214,7 @@ async function loadTable(key){
  if(!rows.length){target.innerHTML='<div class="empty">Belum ada data.</div>';return;}
  const headers=s.cols.map(c=>'<th>'+c[1]+'</th>').join("")+(['ideas','investors','messages'].includes(key)?'<th>Aksi</th>':"");
  const referralActions=key==="referrals"&&(currentRole==="admin"||currentRole==="ceo")?'<th>Perbarui status</th>':"";
- target.innerHTML='<table><thead><tr>'+headers+(key==="projects"&&currentRole!=="marketing"?'<th>Aksi</th>':"")+referralActions+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+s.cols.map(c=>'<td>'+fmt(r[c[0]])+'</td>').join("")+(key==="ideas"?'<td><button class="actionbtn" type="button" data-idea-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="investors"?'<td><button class="actionbtn" type="button" data-investor-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="messages"?'<td><button class="actionbtn" type="button" data-message-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="projects"&&currentRole!=="marketing"?'<td><button class="actionbtn" type="button" data-project-edit="'+esc(r.id)+'">Edit</button> <button class="actionbtn" type="button" data-project-delete="'+esc(r.id)+'">Hapus</button></td>':"")+(key==="referrals"&&(currentRole==="admin"||currentRole==="ceo")?'<td><select data-ref-status="'+esc(r.id)+'" style="min-width:145px"><option value="lead" '+((r.status||"lead")==="lead"?"selected":"")+'>Lead Baru</option><option value="contacted" '+(r.status==="contacted"?"selected":"")+'>Dihubungi</option><option value="negotiation" '+(r.status==="negotiating"?"selected":"")+'>Negosiasi</option><option value="won" '+(r.status==="won"?"selected":"")+'>Deal / Berhasil</option><option value="lost" '+(r.status==="lost"?"selected":"")+'>Ditolak / Tidak lanjut</option></select> <button class="actionbtn" type="button" data-save-ref-status="'+esc(r.id)+'">Simpan</button></td>':"")+'</tr>').join("")+'</tbody></table>';
+ target.innerHTML='<table><thead><tr>'+headers+(key==="projects"&&currentRole!=="marketing"?'<th>Aksi</th>':"")+referralActions+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+s.cols.map(c=>'<td>'+fmt(r[c[0]])+'</td>').join("")+(key==="ideas"?'<td><button class="actionbtn" type="button" data-idea-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="investors"?'<td><button class="actionbtn" type="button" data-investor-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="messages"?'<td><button class="actionbtn" type="button" data-message-id="'+esc(r.id)+'">Lihat / Kelola</button></td>':key==="projects"&&currentRole!=="marketing"?'<td><button class="actionbtn" type="button" data-project-edit="'+esc(r.id)+'">Edit</button> <button class="actionbtn" type="button" data-project-delete="'+esc(r.id)+'">Hapus</button></td>':"")+(key==="referrals"&&(currentRole==="admin"||currentRole==="ceo")?'<td><select data-ref-status="'+esc(r.id)+'" style="min-width:145px"><option value="lead" '+((r.status||"lead")==="lead"?"selected":"")+'>Lead Baru</option><option value="contacted" '+(r.status==="contacted"?"selected":"")+'>Dihubungi</option><option value="negotiation" '+(r.status==="negotiation"?"selected":"")+'>Negosiasi</option><option value="won" '+(r.status==="won"?"selected":"")+'>Deal / Berhasil</option><option value="lost" '+(r.status==="lost"?"selected":"")+'>Ditolak / Tidak lanjut</option></select> <button class="actionbtn" type="button" data-save-ref-status="'+esc(r.id)+'">Simpan</button></td>':"")+'</tr>').join("")+'</tbody></table>';
  if(key==="referrals"&&(currentRole==="admin"||currentRole==="ceo")){
   target.querySelectorAll("[data-save-ref-status]").forEach(btn=>btn.addEventListener("click",async()=>{
    const id=btn.dataset.saveRefStatus;
@@ -222,11 +222,27 @@ async function loadTable(key){
    if(!select)return;
    btn.disabled=true;
    const oldLabel=btn.textContent;btn.textContent="Menyimpan...";
-   const {error}=await sb.from("referrals").update({status:select.value}).eq("id",id);
-   btn.disabled=false;btn.textContent=oldLabel;
-   if(error){alert("Gagal memperbarui status referral: "+error.message);return;}
-   alert("Status referral berhasil diperbarui.");
-   await loadTable("referrals");
+   try{
+    const {data,error}=await sb.from("referrals")
+     .update({status:select.value})
+     .eq("id",id)
+     .select("id")
+     .maybeSingle();
+    btn.disabled=false;btn.textContent=oldLabel;
+    if(error){
+     alert("Gagal memperbarui status referral: "+error.message);
+     return;
+    }
+    if(!data || !data.id){
+     alert("Status belum berubah. Database tidak mengembalikan baris yang diperbarui. Periksa kebijakan UPDATE RLS untuk Admin/CEO.");
+     return;
+    }
+    alert("Status referral berhasil diperbarui dan dikonfirmasi oleh database.");
+    await loadTable("referrals");
+   }catch(err){
+    btn.disabled=false;btn.textContent=oldLabel;
+    alert("Terjadi kesalahan saat memperbarui status: "+(err?.message||"Kesalahan tidak diketahui"));
+   }
   }));
  }
  if(key==="ideas") target.querySelectorAll("[data-idea-id]").forEach(btn=>btn.addEventListener("click",()=>openIdea(rows.find(r=>String(r.id)===btn.dataset.ideaId))));
