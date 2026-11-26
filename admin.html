@@ -147,6 +147,20 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
  </div>
 </div>
 
+
+<div class="modalback" id="commissionPaymentModal" role="dialog" aria-modal="true" aria-labelledby="commissionPaymentTitle">
+ <div class="modal">
+  <div class="headrow"><h2 id="commissionPaymentTitle">Catat Pembayaran Komisi</h2><button class="btn" id="closeCommissionPayment" type="button">Tutup</button></div>
+  <p class="small" id="commissionPaymentInfo"></p>
+  <label for="commissionPaymentReference">Referensi transfer *</label>
+  <input id="commissionPaymentReference" maxlength="160" required placeholder="Nomor referensi / ID transaksi bank">
+  <label for="commissionPaymentNotes">Catatan (opsional)</label>
+  <input id="commissionPaymentNotes" maxlength="500" placeholder="Contoh: Transfer melalui BCA">
+  <p class="status" id="commissionPaymentStatus"></p>
+  <div class="modalactions"><button class="btn primary" id="submitCommissionPayment" type="button">Konfirmasi Pembayaran</button></div>
+ </div>
+</div>
+
 <script>
 const SUPABASE_URL = "https://aoghuxbthbefbxbgruhn.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mVLgk9OY3xoNTPlZ0olQQQ_XOtKVsi6";
@@ -155,6 +169,8 @@ let currentRole = null;
 let selectedIdeaId = null;
 let selectedInvestorId = null;
 let selectedMessageId = null;
+let selectedCommissionId = null;
+let selectedCommissionAmount = 0;
 const titles = {overview:"Ringkasan",ideas:"Pengajuan Ide",investors:"Calon Investor",messages:"Konsultasi",projects:"Proyek",partners:"Mitra",referrals:"Referral",commissions:"Komisi"};
 const specs = {
  ideas:{table:"idea_submissions",target:"ideasTable",search:"searchIdeas",cols:[["name","Nama"],["email","Email"],["phone","WhatsApp"],["idea_title","Judul ide"],["business_type","Bidang"],["budget_range","Anggaran"],["status","Status"],["created_at","Tanggal"]]},
@@ -184,6 +200,7 @@ function showSection(key){
  if(key!=="overview"){loadTable(key);if(key==="partners")loadPartnerApplications();}
 }
 async function loadTable(key){
+ if(key==="commissions"){await loadCommissions();return;}
  const s=specs[key];if(!s||!canSee(key))return;
  const target=$(s.target);target.innerHTML='<div class="empty">Memuat data...</div>';
  let q=sb.from(s.table).select("*");
@@ -301,6 +318,95 @@ async function saveMessageStatus(){
 $("closeMessageModal").addEventListener("click",()=>$("messageModal").classList.remove("open"));
 $("messageModal").addEventListener("click",e=>{if(e.target===$("messageModal"))$("messageModal").classList.remove("open");});
 $("saveMessageStatus").addEventListener("click",saveMessageStatus);
+
+
+
+function formatRupiah(value){
+ return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(value)||0);
+}
+async function loadCommissions(){
+ const target=$("commissionsTable");
+ if(!target||!canSee("commissions"))return;
+ target.innerHTML='<div class="empty">Memuat komisi...</div>';
+ const {data:rows,error}=await sb.from("commissions").select("*").order("created_at",{ascending:false}).limit(200);
+ if(error){target.innerHTML='<div class="empty">Gagal memuat komisi: '+esc(error.message)+'</div>';return;}
+ if(!rows?.length){target.innerHTML='<div class="empty">Belum ada data komisi.</div>';return;}
+ const partnerIds=[...new Set(rows.map(r=>r.partner_id).filter(Boolean))];
+ const referralIds=[...new Set(rows.map(r=>r.referral_id).filter(Boolean))];
+ const paymentIds=[...new Set(rows.map(r=>r.referral_payment_id).filter(Boolean))];
+ const [partnersRes,referralsRes,paymentsRes]=await Promise.all([
+  partnerIds.length?sb.from("partners").select("id,full_name,partner_code").in("id",partnerIds):Promise.resolve({data:[]}),
+  referralIds.length?sb.from("referrals").select("id,customer_name,project_type").in("id",referralIds):Promise.resolve({data:[]}),
+  paymentIds.length?sb.from("referral_payments").select("id,payment_reference,gross_amount,third_party_cost,payment_date").in("id",paymentIds):Promise.resolve({data:[]})
+ ]);
+ if(partnersRes.error||referralsRes.error||paymentsRes.error){
+  target.innerHTML='<div class="empty">Komisi terbaca, tetapi detail mitra/pembayaran gagal dimuat. Periksa izin SELECT RLS untuk Admin/CEO.</div>';return;
+ }
+ const partners=new Map((partnersRes.data||[]).map(x=>[x.id,x]));
+ const referrals=new Map((referralsRes.data||[]).map(x=>[x.id,x]));
+ const payments=new Map((paymentsRes.data||[]).map(x=>[x.id,x]));
+ target.innerHTML='<table><thead><tr><th>Mitra</th><th>Pelanggan / Proyek</th><th>Dasar pembayaran</th><th>Nilai komisi</th><th>Status</th><th>Tanggal</th><th>Aksi</th></tr></thead><tbody>'+
+ rows.map(r=>{
+  const partner=partners.get(r.partner_id)||{},ref=referrals.get(r.referral_id)||{},pay=payments.get(r.referral_payment_id)||{};
+  const status=String(r.status||"pending").toLowerCase();
+  const action=currentRole==="admin"||currentRole==="ceo"
+   ? (status==="pending"?'<button class="actionbtn" data-approve-commission="'+esc(r.id)+'">Setujui</button>':status==="approved"&&!r.paid_at?'<button class="actionbtn" data-pay-commission="'+esc(r.id)+'">Catat Pembayaran</button>':"—")
+   : "—";
+  const basis=pay.payment_reference||"—";
+  const paid=r.paid_at?"Dibayar "+fmt(r.paid_at):"";
+  return '<tr><td>'+esc(partner.full_name||"Mitra")+'<div class="small">'+esc(partner.partner_code||"")+'</div></td>'+
+   '<td>'+esc(ref.customer_name||"—")+'<div class="small">'+esc(ref.project_type||"")+'</div></td>'+
+   '<td>'+esc(basis)+'<div class="small">Masuk: '+formatRupiah(pay.gross_amount)+' · Biaya pihak ketiga: '+formatRupiah(pay.third_party_cost)+'</div></td>'+
+   '<td><strong>'+formatRupiah(r.commission_amount)+'</strong></td>'+
+   '<td><span class="pill">'+esc(status)+'</span>'+(r.payment_reference?'<div class="small">Transfer: '+esc(r.payment_reference)+'</div>':"")+'</td>'+
+   '<td>'+fmt(r.created_at)+(paid?'<div class="small">'+esc(paid)+'</div>':"")+'</td><td>'+action+'</td></tr>';
+ }).join("")+'</tbody></table>';
+ target.querySelectorAll("[data-approve-commission]").forEach(btn=>btn.addEventListener("click",()=>approveCommission(btn.dataset.approveCommission)));
+ target.querySelectorAll("[data-pay-commission]").forEach(btn=>btn.addEventListener("click",()=>{
+  const row=rows.find(x=>String(x.id)===btn.dataset.payCommission);
+  if(row)openCommissionPayment(row);
+ }));
+}
+async function approveCommission(id){
+ if(currentRole!=="admin"&&currentRole!=="ceo")return;
+ if(!confirm("Setujui komisi ini? Pastikan pembayaran pelanggan sudah benar-benar diterima DDA."))return;
+ const {error}=await sb.rpc("dda_approve_commission",{p_commission_id:id});
+ if(error){alert("Gagal menyetujui komisi: "+error.message);return;}
+ alert("Komisi berhasil disetujui. Setelah transfer ke mitra dilakukan, catat pembayaran di dashboard.");
+ await loadCommissions();
+}
+function openCommissionPayment(row){
+ selectedCommissionId=row.id;
+ selectedCommissionAmount=Number(row.commission_amount)||0;
+ $("commissionPaymentInfo").textContent="Nilai komisi yang akan dicatat: "+formatRupiah(selectedCommissionAmount)+". Pastikan transfer sudah benar-benar dilakukan.";
+ $("commissionPaymentReference").value="";
+ $("commissionPaymentNotes").value="";
+ $("commissionPaymentStatus").textContent="";
+ $("commissionPaymentStatus").classList.remove("bad");
+ $("commissionPaymentModal").classList.add("open");
+}
+$("closeCommissionPayment").addEventListener("click",()=>$("commissionPaymentModal").classList.remove("open"));
+$("commissionPaymentModal").addEventListener("click",e=>{if(e.target===$("commissionPaymentModal"))$("commissionPaymentModal").classList.remove("open");});
+$("submitCommissionPayment").addEventListener("click",async()=>{
+ if(!selectedCommissionId)return;
+ const reference=$("commissionPaymentReference").value.trim();
+ const notes=$("commissionPaymentNotes").value.trim()||null;
+ if(!reference){$("commissionPaymentStatus").textContent="Referensi transfer wajib diisi.";$("commissionPaymentStatus").classList.add("bad");return;}
+ if(!confirm("Konfirmasi bahwa komisi "+formatRupiah(selectedCommissionAmount)+" sudah benar-benar ditransfer kepada mitra?"))return;
+ const btn=$("submitCommissionPayment");btn.disabled=true;
+ $("commissionPaymentStatus").textContent="Menyimpan pembayaran...";
+ const {error}=await sb.rpc("dda_mark_commission_paid",{
+  p_commission_id:selectedCommissionId,
+  p_payment_reference:reference,
+  p_payment_notes:notes
+ });
+ btn.disabled=false;
+ if(error){$("commissionPaymentStatus").textContent="Gagal mencatat pembayaran: "+error.message;$("commissionPaymentStatus").classList.add("bad");return;}
+ $("commissionPaymentStatus").classList.remove("bad");
+ $("commissionPaymentStatus").textContent="Pembayaran berhasil dicatat.";
+ await loadCommissions();
+ setTimeout(()=>$("commissionPaymentModal").classList.remove("open"),700);
+});
 
 
 
