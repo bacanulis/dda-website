@@ -163,6 +163,7 @@
           <label>Nomor WhatsApp<input name="phone" type="tel" placeholder="08xxxxxxxxxx"></label>
           <label>Topik konsultasi<input name="subject" maxlength="180" placeholder="Contoh: Pembuatan marketplace"></label>
           <label>Pesan<textarea name="message" required minlength="5" placeholder="Tuliskan kebutuhan Anda..."></textarea></label>
+          <label>Kode Referral Mitra (opsional)<input name="referral_code" maxlength="40" autocomplete="off" placeholder="Contoh: DDA-ANDIPR-9R342U"></label>
           <button class="btn" type="submit">Kirim Pesan ↗</button><div class="form-status" id="contactStatus" role="status"></div>
         </form>
       </div>
@@ -217,7 +218,66 @@
     }
     submitDdaForm("ideaForm", "idea_submissions", "ideaStatus");
     submitDdaForm("investorForm", "investor_leads", "investorStatus");
-    submitDdaForm("contactForm", "contact_messages", "contactStatus");
+    // Form konsultasi memakai RPC agar pesan dan referral tersimpan secara atomik.
+    async function submitContactWithReferral() {
+      const form = document.getElementById("contactForm");
+      const status = document.getElementById("contactStatus");
+      if (!form || !status) return;
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const button = form.querySelector('button[type="submit"]');
+        const data = Object.fromEntries(new FormData(form).entries());
+        Object.keys(data).forEach((key) => {
+          if (typeof data[key] === "string") data[key] = data[key].trim();
+          if (data[key] === "") data[key] = null;
+        });
+
+        const payload = {
+          p_name: data.name,
+          p_email: data.email,
+          p_phone: data.phone,
+          p_subject: data.subject,
+          p_message: data.message,
+          p_referral_code: data.referral_code
+        };
+
+        button.disabled = true;
+        status.className = "form-status";
+        status.textContent = "Mengirim pesan...";
+        try {
+          const response = await fetch(`${DDA_SUPABASE_URL}/rest/v1/rpc/dda_submit_contact_with_referral`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": DDA_SUPABASE_KEY,
+              "Authorization": `Bearer ${DDA_SUPABASE_KEY}`
+            },
+            body: JSON.stringify(payload)
+          });
+          const result = await response.json().catch(() => null);
+          if (!response.ok) {
+            const message = result?.message || result?.details || "";
+            if (response.status === 400 && /kode referral/i.test(message)) {
+              throw new Error("Kode referral tidak valid atau mitra belum aktif. Periksa kembali kode tersebut.");
+            }
+            throw new Error(message || `HTTP ${response.status}`);
+          }
+          form.reset();
+          status.className = "form-status ok";
+          status.textContent = "Pesan berhasil dikirim. Terima kasih, tim DDA akan menghubungi Anda.";
+        } catch (error) {
+          console.error("DDA contact form error:", error);
+          status.className = "form-status err";
+          status.textContent = error.message.includes("Kode referral")
+            ? error.message
+            : "Belum berhasil mengirim. Silakan coba lagi beberapa saat.";
+        } finally {
+          button.disabled = false;
+        }
+      });
+    }
+    submitContactWithReferral();
   </script>
 
   <script>
