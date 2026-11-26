@@ -62,7 +62,7 @@ button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!impo
     <div class="card"><div class="headrow"><div><h2>Pengajuan Mitra</h2><p class="small">Pendaftar mandiri menunggu persetujuan Admin sebelum kode referral aktif.</p></div></div><div class="tablewrap" id="partnerApplicationsTable"></div></div>
     <div class="card"><div class="headrow"><div><h2>Mitra DDA</h2><p class="small">Kelola mitra yang telah disetujui.</p></div><button class="btn primary" id="addPartnerBtn" type="button">+ Tambah Mitra</button></div><div class="tablewrap" id="partnersTable"></div></div>
    </section>
-   <section id="referrals" class="section"><div class="card"><h2>Referral</h2><div class="tablewrap" id="referralsTable"></div></div></section>
+   <section id="referrals" class="section"><div class="card"><h2>Referral</h2><div class="tablewrap" id="referralsTable"></div></div><div class="card"><h2>Riwayat Aktivitas Referral</h2><p class="small">Catatan status tersimpan otomatis dan tidak dapat diubah dari dashboard.</p><div class="tablewrap" id="referralHistoryTable"><div class="empty">Memuat riwayat...</div></div></div></section>
    <section id="commissions" class="section"><div class="card"><h2>Komisi Mitra</h2><div class="tablewrap" id="commissionsTable"></div></div></section>
    <p class="note">Data dibaca langsung dari Supabase. Hak akses tetap ditentukan oleh Row Level Security, bukan hanya tampilan dashboard.</p>
   </main>
@@ -210,6 +210,7 @@ async function loadTable(key){
  if(error){target.innerHTML='<div class="empty">Tidak dapat memuat data. Periksa hak akses RLS atau koneksi.</div>';console.error(error);return;}
  const query=s.search?($(s.search).value||"").toLowerCase():"";
  const rows=(data||[]).filter(r=>!query||JSON.stringify(r).toLowerCase().includes(query));
+ if(key==="referrals"&&(currentRole==="admin"||currentRole==="ceo")) await loadReferralHistory();
  if(!rows.length){target.innerHTML='<div class="empty">Belum ada data.</div>';return;}
  const headers=s.cols.map(c=>'<th>'+c[1]+'</th>').join("")+(['ideas','investors','messages'].includes(key)?'<th>Aksi</th>':"");
  const referralActions=key==="referrals"&&(currentRole==="admin"||currentRole==="ceo")?'<th>Perbarui status</th>':"";
@@ -235,6 +236,22 @@ async function loadTable(key){
   target.querySelectorAll("[data-project-edit]").forEach(btn=>btn.addEventListener("click",()=>openProject(rows.find(r=>String(r.id)===btn.dataset.projectEdit))));
   target.querySelectorAll("[data-project-delete]").forEach(btn=>btn.addEventListener("click",()=>deleteProject(rows.find(r=>String(r.id)===btn.dataset.projectDelete))));
  }
+}
+async function loadReferralHistory(){
+ const target=$("referralHistoryTable");
+ if(!target)return;
+ target.innerHTML='<div class="empty">Memuat riwayat...</div>';
+ const {data,error}=await sb.from("referral_status_history").select("id,referral_id,old_status,new_status,changed_by,changed_at").order("changed_at",{ascending:false}).limit(100);
+ if(error){target.innerHTML='<div class="empty">Riwayat belum dapat dimuat: '+esc(error.message)+'</div>';return;}
+ const items=data||[];
+ if(!items.length){target.innerHTML='<div class="empty">Belum ada riwayat.</div>';return;}
+ const ids=[...new Set(items.map(x=>x.referral_id))];
+ const {data:refs,error:refError}=await sb.from("referrals").select("id,customer_name").in("id",ids);
+ if(refError){target.innerHTML='<div class="empty">Gagal memuat nama calon pelanggan.</div>';return;}
+ const names=Object.fromEntries((refs||[]).map(x=>[x.id,x.customer_name]));
+ const labels={lead:"Lead Baru",contacted:"Dihubungi",negotiation:"Negosiasi",won:"Deal / Berhasil",lost:"Ditolak / Tidak lanjut"};
+ target.innerHTML='<table><thead><tr><th>Calon pelanggan</th><th>Status sebelumnya</th><th>Status baru</th><th>Waktu perubahan</th><th>User ID Admin</th></tr></thead><tbody>'+
+ items.map(x=>'<tr><td>'+esc(names[x.referral_id]||x.referral_id)+'</td><td>'+esc(x.old_status?labels[x.old_status]||x.old_status:"Referral dibuat")+'</td><td>'+esc(labels[x.new_status]||x.new_status)+'</td><td>'+fmt(x.changed_at)+'</td><td>'+esc(x.changed_by||"Sistem / data lama")+'</td></tr>').join("")+'</tbody></table>';
 }
 function openIdea(row){
  if(!row)return;

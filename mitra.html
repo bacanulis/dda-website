@@ -13,6 +13,7 @@
 <div class="stats"><div class="card stat"><small>Total referral</small><strong id="refCount">0</strong></div><div class="card stat"><small>Komisi pending</small><strong id="pendingTotal">Rp0</strong></div><div class="card stat"><small>Komisi disetujui</small><strong id="approvedTotal">Rp0</strong></div><div class="card stat"><small>Komisi dibayar</small><strong id="paidTotal">Rp0</strong></div></div>
 <div class="card"><h2>Calon pelanggan dari referral</h2><div class="tablewrap" id="referrals"><div class="empty">Memuat data...</div></div></div>
 <div class="card"><h2>Riwayat komisi</h2><div class="tablewrap" id="commissions"><div class="empty">Memuat data...</div></div></div>
+<div class="card"><h2>Riwayat aktivitas referral</h2><p class="small">Riwayat perubahan status referral Anda.</p><div class="tablewrap" id="referralHistory"><div class="empty">Memuat riwayat...</div></div></div>
 <p class="note">Data hanya menampilkan referral dan komisi yang terhubung dengan akun mitra ini. Jika ada data yang tidak sesuai, hubungi Admin DDA.</p></section></div>
 <script>
 const SUPABASE_URL="https://aoghuxbthbefbxbgruhn.supabase.co";
@@ -25,16 +26,22 @@ const date=v=>v?new Date(v).toLocaleDateString('id-ID',{day:'2-digit',month:'sho
 function statusLabel(s){return ({pending:'Pending',approved:'Disetujui',paid:'Dibayar',lead:'Lead',contacted:'Dihubungi',negotiation:'Negosiasi',won:'Deal / Berhasil',lost:'Ditolak / Tidak lanjut'})[String(s||'').toLowerCase()]||safe(s||'—')}
 async function loadDashboard(){
  $('referrals').innerHTML='<div class="empty">Memuat referral...</div>';$('commissions').innerHTML='<div class="empty">Memuat komisi...</div>';
- const [rr,cr]=await Promise.all([
+ const [rr,cr,hr]=await Promise.all([
   sb.from('referrals').select('id,customer_name,customer_phone,project_type,project_value,status,created_at').eq('partner_id',partner.id).order('created_at',{ascending:false}),
-  sb.from('commissions').select('id,commission_amount,status,created_at,approved_at,paid_at,payment_reference,payment_notes').eq('partner_id',partner.id).order('created_at',{ascending:false})
+  sb.from('commissions').select('id,commission_amount,status,created_at,approved_at,paid_at,payment_reference,payment_notes').eq('partner_id',partner.id).order('created_at',{ascending:false}),
+  sb.from('referral_status_history').select('id,referral_id,old_status,new_status,changed_at').order('changed_at',{ascending:false}).limit(100)
  ]);
  if(rr.error){$('referrals').innerHTML='<div class="empty">Gagal memuat referral: '+safe(rr.error.message)+'</div>';return;}
  if(cr.error){$('commissions').innerHTML='<div class="empty">Gagal memuat komisi: '+safe(cr.error.message)+'</div>';return;}
- const refs=rr.data||[],comms=cr.data||[];$('refCount').textContent=refs.length;
+ const refs=rr.data||[],comms=cr.data||[],hist=hr.data||[];$('refCount').textContent=refs.length;
  const sum=s=>comms.filter(x=>x.status===s).reduce((a,x)=>a+Number(x.commission_amount||0),0);
  $('pendingTotal').textContent=rupiah(sum('pending'));$('approvedTotal').textContent=rupiah(sum('approved'));$('paidTotal').textContent=rupiah(sum('paid'));
  $('referrals').innerHTML=refs.length?'<table><thead><tr><th>Pelanggan</th><th>WhatsApp</th><th>Proyek</th><th>Nilai proyek</th><th>Status</th><th>Tanggal</th></tr></thead><tbody>'+refs.map(r=>'<tr><td>'+safe(r.customer_name)+'</td><td>'+safe(r.customer_phone)+'</td><td>'+safe(r.project_type)+'</td><td>'+rupiah(r.project_value)+'</td><td><span class="pill">'+statusLabel(r.status)+'</span></td><td>'+date(r.created_at)+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">Belum ada referral.</div>';
+ if(hr.error){$('referralHistory').innerHTML='<div class="empty">Gagal memuat riwayat: '+safe(hr.error.message)+'</div>';}
+ else {
+  const refNames=Object.fromEntries(refs.map(r=>[r.id,r.customer_name]));
+  $('referralHistory').innerHTML=hist.length?'<table><thead><tr><th>Pelanggan</th><th>Status sebelumnya</th><th>Status baru</th><th>Waktu</th></tr></thead><tbody>'+hist.map(h=>'<tr><td>'+safe(refNames[h.referral_id]||'Referral')+'</td><td>'+safe(h.old_status?statusLabel(h.old_status):'Referral dibuat')+'</td><td>'+safe(statusLabel(h.new_status))+'</td><td>'+safe(new Date(h.changed_at).toLocaleString('id-ID'))+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">Belum ada riwayat aktivitas.</div>';
+ }
  $('commissions').innerHTML=comms.length?'<table><thead><tr><th>Nominal</th><th>Status</th><th>Tanggal dibuat</th><th>Tanggal dibayar</th><th>Referensi transfer</th><th>Catatan</th></tr></thead><tbody>'+comms.map(c=>'<tr><td><strong>'+rupiah(c.commission_amount)+'</strong></td><td><span class="pill">'+statusLabel(c.status)+'</span></td><td>'+date(c.created_at)+'</td><td>'+date(c.paid_at)+'</td><td>'+safe(c.payment_reference)+'</td><td>'+safe(c.payment_notes)+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">Belum ada komisi.</div>';
 }
 async function start(session){$('loginPanel').classList.add('hidden');$('app').classList.remove('hidden');$('logout').classList.remove('hidden');
