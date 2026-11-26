@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071326">
+<title>DDA Admin Dashboard</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#071326;--panel:#0d1d34;--panel2:#112641;--line:#203a59;--txt:#edf5ff;--muted:#9eb1c9;--blue:#398bff;--cyan:#55d6ff;--green:#5bd6a5;--red:#ff8585}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 85% 0,#142c50 0,transparent 32%),var(--bg);color:var(--txt);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.wrap{max-width:1400px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#55d6ff,#7567ff);display:grid;place-items:center;color:#071326;font-weight:900;font-size:20px}.brand small{display:block;color:var(--muted);font-size:11px;letter-spacing:1.4px}.brand strong{font-size:18px}.btn{border:1px solid #31527a;border-radius:10px;padding:10px 14px;background:#15345a;color:white}.btn.primary{background:linear-gradient(100deg,#2679ee,#635cf5);border:0}.btn:disabled{opacity:.55}.login{max-width:430px;margin:8vh auto;background:#0d1d34;border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:0 20px 70px #0005}.login h1{margin:0 0 6px}.muted{color:var(--muted)}label{display:block;font-size:13px;color:#c7d7ea;margin:14px 0 6px}input,select{width:100%;padding:12px;border-radius:10px;border:1px solid #294664;background:#08172b;color:white;outline:none}input:focus,select:focus{border-color:var(--cyan)}.note{font-size:12px;color:var(--muted);line-height:1.5}.error{color:#ff9b9b;font-size:13px;min-height:20px}.shell{display:grid;grid-template-columns:230px 1fr;gap:20px}.side,.card{background:#0d1d34;border:1px solid var(--line);border-radius:16px}.side{padding:14px;height:max-content;position:sticky;top:14px}.side button{display:block;width:100%;text-align:left;margin:4px 0;background:transparent;border:0;color:#c6d7eb;padding:11px;border-radius:9px}.side button.active,.side button:hover{background:#183656;color:white}.main{min-width:0}.headrow{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 18px}.headrow h1{font-size:26px;margin:0}.role{color:#79d7ff;font-size:12px;text-transform:uppercase;letter-spacing:1px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}.stat{padding:17px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:28px;margin-top:8px}.card{padding:18px;margin-bottom:16px}.card h2{font-size:17px;margin:0 0 14px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}.toolbar input{max-width:280px}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:700px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #203751;font-size:13px;vertical-align:top}th{color:#9fb6d0;font-weight:600}td{color:#e0ebf8}.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#173b5c;color:#8edcff;font-size:11px}.empty{padding:25px;text-align:center;color:var(--muted)}.section{display:none}.section.active{display:block}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.small{font-size:12px;color:var(--muted)}.status{font-size:12px;min-height:18px;color:var(--green)}.status.bad{color:#ff9b9b}
+@media(max-width:850px){.wrap{padding:14px}.shell{grid-template-columns:1fr}.side{position:static;display:flex;overflow:auto;gap:4px}.side button{white-space:nowrap;width:auto}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}.headrow h1{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <header class="top">
+  <div class="brand"><div class="logo">D</div><div><strong>Developer Digital Asahan</strong><small>CONTROL CENTER</small></div></div>
+  <button id="logoutTop" class="btn hidden">Keluar</button>
+ </header>
+ <section id="loginPanel" class="login">
+  <div class="role">DDA Secure Workspace</div><h1>Masuk Dashboard</h1>
+  <p class="muted">Gunakan akun staf DDA yang sudah terdaftar dan diberi peran oleh administrator.</p>
+  <form id="loginForm">
+   <label>Email</label><input name="email" type="email" required autocomplete="username" placeholder="email@dda.id">
+   <label>Password</label><input name="password" type="password" required autocomplete="current-password" placeholder="Password akun">
+   <p class="error" id="loginError"></p><button class="btn primary" style="width:100%" type="submit">Masuk</button>
+  </form>
+  <p class="note">Akses dashboard tidak dibuka melalui pendaftaran publik. Admin harus membuat akun staf dan menetapkan peran melalui Supabase secara aman.</p>
+ </section>
+
+ <section id="appPanel" class="shell hidden">
+  <nav class="side" id="nav">
+   <button class="active" data-target="overview">▦ Ringkasan</button>
+   <button data-target="ideas">✦ Pengajuan Ide</button>
+   <button data-target="investors">◈ Calon Investor</button>
+   <button data-target="messages">✉ Konsultasi</button>
+   <button data-target="projects">▤ Proyek</button>
+   <button data-target="partners">♧ Mitra</button>
+   <button data-target="referrals">↗ Referral</button>
+   <button data-target="commissions">◉ Komisi</button>
+  </nav>
+  <main class="main">
+   <div class="headrow"><div><div class="role" id="roleLabel">STAFF</div><h1 id="pageTitle">Ringkasan</h1><div class="small" id="userEmail"></div></div><button id="refreshBtn" class="btn">Muat ulang</button></div>
+   <section id="overview" class="section active">
+    <div class="stats">
+     <div class="card stat"><small>Pengajuan ide</small><strong id="countIdeas">—</strong></div>
+     <div class="card stat"><small>Calon investor</small><strong id="countInvestors">—</strong></div>
+     <div class="card stat"><small>Pesan konsultasi</small><strong id="countMessages">—</strong></div>
+     <div class="card stat" id="partnerStat"><small>Mitra aktif</small><strong id="countPartners">—</strong></div>
+    </div>
+    <div class="card"><h2>Aktivitas terbaru</h2><p class="muted">Gunakan menu di samping untuk membuka dan menindaklanjuti data masuk.</p><div id="overviewStatus" class="small">Memuat data...</div></div>
+   </section>
+   <section id="ideas" class="section"><div class="card"><h2>Pengajuan Ide</h2><div class="toolbar"><input id="searchIdeas" placeholder="Cari nama, judul, email..."><button class="btn" onclick="loadTable('ideas')">Muat ulang</button></div><div class="tablewrap" id="ideasTable"></div></div></section>
+   <section id="investors" class="section"><div class="card"><h2>Calon Investor</h2><div class="toolbar"><input id="searchInvestors" placeholder="Cari nama, minat, email..."><button class="btn" onclick="loadTable('investors')">Muat ulang</button></div><div class="tablewrap" id="investorsTable"></div></div></section>
+   <section id="messages" class="section"><div class="card"><h2>Pesan Konsultasi</h2><div class="toolbar"><input id="searchMessages" placeholder="Cari nama, topik, pesan..."><button class="btn" onclick="loadTable('messages')">Muat ulang</button></div><div class="tablewrap" id="messagesTable"></div></div></section>
+   <section id="projects" class="section"><div class="card"><h2>Proyek DDA</h2><p class="small">Daftar proyek yang sudah dibuat. Pengelolaan proyek penuh disediakan untuk Admin dan CEO.</p><div class="tablewrap" id="projectsTable"></div></div></section>
+   <section id="partners" class="section"><div class="card"><h2>Mitra DDA</h2><div class="tablewrap" id="partnersTable"></div></div></section>
+   <section id="referrals" class="section"><div class="card"><h2>Referral</h2><div class="tablewrap" id="referralsTable"></div></div></section>
+   <section id="commissions" class="section"><div class="card"><h2>Komisi Mitra</h2><div class="tablewrap" id="commissionsTable"></div></div></section>
+   <p class="note">Data dibaca langsung dari Supabase. Hak akses tetap ditentukan oleh Row Level Security, bukan hanya tampilan dashboard.</p>
+  </main>
+ </section>
+</div>
+<script>
+const SUPABASE_URL = "https://aoghuxbthbefbxbgruhn.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_mVLgk9OY3xoNTPlZ0olQQQ_XOtKVsi6";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+let currentRole = null;
+const titles = {overview:"Ringkasan",ideas:"Pengajuan Ide",investors:"Calon Investor",messages:"Konsultasi",projects:"Proyek",partners:"Mitra",referrals:"Referral",commissions:"Komisi"};
+const specs = {
+ ideas:{table:"idea_submissions",target:"ideasTable",search:"searchIdeas",cols:[["name","Nama"],["email","Email"],["phone","WhatsApp"],["idea_title","Judul ide"],["business_type","Bidang"],["budget_range","Anggaran"],["status","Status"],["created_at","Tanggal"]]},
+ investors:{table:"investor_leads",target:"investorsTable",search:"searchInvestors",cols:[["name","Nama"],["email","Email"],["phone","WhatsApp"],["investment_budget","Anggaran"],["interests","Minat"],["status","Status"],["created_at","Tanggal"]]},
+ messages:{table:"contact_messages",target:"messagesTable",search:"searchMessages",cols:[["name","Nama"],["email","Email"],["phone","WhatsApp"],["subject","Topik"],["message","Pesan"],["status","Status"],["created_at","Tanggal"]]},
+ projects:{table:"projects",target:"projectsTable",cols:[["title","Nama proyek"],["category","Kategori"],["estimated_budget","Estimasi anggaran"],["revenue_projection","Proyeksi pendapatan"],["is_published","Publikasi"]]},
+ partners:{table:"partners",target:"partnersTable",cols:[["full_name","Nama mitra"],["partner_code","Kode"],["phone","WhatsApp"],["commission_rate","Komisi %"],["status","Status"]]},
+ referrals:{table:"referrals",target:"referralsTable",cols:[["customer_name","Calon pelanggan"],["customer_phone","WhatsApp"],["project_type","Jenis proyek"],["project_value","Nilai proyek"],["status","Status"]]},
+ commissions:{table:"commissions",target:"commissionsTable",cols:[["commission_amount","Nilai komisi"],["status","Status"],["created_at","Tanggal"],["paid_at","Dibayar"]]}
+};
+const $=id=>document.getElementById(id);
+function esc(v){return String(v??"—").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function fmt(v){if(v===true)return "Ya";if(v===false)return "Tidak";if(!v)return "—";if(typeof v==="string"&&v.includes("T")){const d=new Date(v);if(!isNaN(d))return d.toLocaleString("id-ID");}return esc(v);}
+function canSee(key){if(currentRole==="admin"||currentRole==="ceo")return true;return ["ideas","investors","messages"].includes(key);}
+function setRoleUI(){
+ $("roleLabel").textContent=currentRole==="admin"?"ADMIN UTAMA":currentRole==="ceo"?"CEO":"TIM MARKETING";
+ const restricted=currentRole==="marketing";
+ ["projects","partners","referrals","commissions"].forEach(k=>{const b=document.querySelector(`[data-target="${k}"]`);if(b)b.classList.toggle("hidden",restricted);});
+ $("partnerStat").classList.toggle("hidden",restricted);
+}
+function showSection(key){
+ if(!canSee(key)){return;}
+ document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
+ $(key).classList.add("active");document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.target===key));
+ $("pageTitle").textContent=titles[key]||key;
+ if(key!=="overview")loadTable(key);
+}
+async function loadTable(key){
+ const s=specs[key];if(!s||!canSee(key))return;
+ const target=$(s.target);target.innerHTML='<div class="empty">Memuat data...</div>';
+ let q=sb.from(s.table).select("*").order("created_at",{ascending:false}).limit(100);
+ const {data,error}=await q;
+ if(error){target.innerHTML='<div class="empty">Tidak dapat memuat data. Periksa hak akses RLS atau koneksi.</div>';console.error(error);return;}
+ const query=s.search?($(s.search).value||"").toLowerCase():"";
+ const rows=(data||[]).filter(r=>!query||JSON.stringify(r).toLowerCase().includes(query));
+ if(!rows.length){target.innerHTML='<div class="empty">Belum ada data.</div>';return;}
+ target.innerHTML='<table><thead><tr>'+s.cols.map(c=>'<th>'+c[1]+'</th>').join("")+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+s.cols.map(c=>'<td>'+fmt(r[c[0]])+'</td>').join("")+'</tr>').join("")+'</tbody></table>';
+}
+async function loadOverview(){
+ const tables=[["idea_submissions","countIdeas"],["investor_leads","countInvestors"],["contact_messages","countMessages"]];
+ for(const [table,id] of tables){const {count,error}=await sb.from(table).select("*",{count:"exact",head:true});$(id).textContent=error?"—":count;}
+ if(currentRole!=="marketing"){const {count,error}=await sb.from("partners").select("*",{count:"exact",head:true});$("countPartners").textContent=error?"—":count;}
+ $("overviewStatus").textContent="Pembaruan terakhir: "+new Date().toLocaleString("id-ID");
+}
+async function startApp(session){
+ $("loginPanel").classList.add("hidden");$("appPanel").classList.remove("hidden");$("logoutTop").classList.remove("hidden");
+ $("userEmail").textContent=session.user.email||"";
+ const {data,error}=await sb.from("profiles").select("role").eq("id",session.user.id).maybeSingle();
+ if(error||!data||!["admin","ceo","marketing"].includes(data.role)){
+  await sb.auth.signOut();$("appPanel").classList.add("hidden");$("loginPanel").classList.remove("hidden");
+  $("loginError").textContent="Akun ini belum memiliki peran staf DDA. Hubungi admin utama.";
+  $("logoutTop").classList.add("hidden");return;
+ }
+ currentRole=data.role;setRoleUI();await loadOverview();
+}
+$("loginForm").addEventListener("submit",async e=>{e.preventDefault();$("loginError").textContent="Memeriksa akun...";const f=new FormData(e.currentTarget);const {data,error}=await sb.auth.signInWithPassword({email:f.get("email"),password:f.get("password")});if(error){$("loginError").textContent="Login gagal. Periksa email dan password.";return;}await startApp(data.session);});
+$("logoutTop").addEventListener("click",async()=>{await sb.auth.signOut();location.reload();});
+$("nav").addEventListener("click",e=>{const b=e.target.closest("button[data-target]");if(b)showSection(b.dataset.target);});
+$("refreshBtn").addEventListener("click",async()=>{await loadOverview();const active=document.querySelector(".section.active");if(active&&active.id!=="overview")await loadTable(active.id);});
+Object.entries(specs).forEach(([key,s])=>{if(s.search)$(s.search).addEventListener("input",()=>loadTable(key));});
+sb.auth.getSession().then(({data})=>{if(data.session)startApp(data.session);});
+sb.auth.onAuthStateChange((_event,session)=>{if(!session){$("appPanel").classList.add("hidden");$("loginPanel").classList.remove("hidden");$("logoutTop").classList.add("hidden");}});
+</script>
+</body>
+</html>
