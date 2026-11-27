@@ -156,6 +156,47 @@
       .service, .op-card, .project, .person { height: 100%; }
     }
 
+  
+    /* Fix desktop team-card text clipping */
+    @media (min-width: 851px) {
+      .team > .person {
+        flex: 0 0 clamp(430px, calc((100% - 36px) / 3), 520px);
+        display: grid;
+        grid-template-columns: 92px minmax(125px, .9fr) minmax(145px, 1.1fr);
+        align-items: center;
+        column-gap: 16px;
+        height: auto;
+        min-height: 160px;
+      }
+      .team > .person .avatar {
+        width: 92px;
+        height: 112px;
+        min-width: 0;
+      }
+      .team > .person .person-info {
+        min-width: 0;
+        width: auto;
+        flex: initial;
+      }
+      .team > .person .person-info h3 {
+        flex: initial;
+        min-width: 0;
+        overflow-wrap: normal;
+        word-break: normal;
+      }
+      .team > .person p {
+        min-width: 0;
+        width: auto;
+        flex: initial;
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.65;
+        white-space: normal;
+        overflow-wrap: break-word;
+        word-break: normal;
+      }
+    }
+
   </style>
 </head>
 <body>
