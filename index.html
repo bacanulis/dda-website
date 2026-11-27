@@ -107,7 +107,17 @@
     .brand-mark .dda-logo-img{width:100%;height:100%}
     .mini-mark .dda-logo-img,.phone-mark .dda-logo-img{width:100%;height:100%;object-fit:contain}
 
-</style>
+
+    .person-info{flex:0 0 150px;min-width:0}
+    .person-name{color:#78c4ff;font:700 13px/1.3 "DM Sans";letter-spacing:.025em;margin:0 0 5px}
+    .person-info h3{margin:0!important;flex:none!important}
+    @media(max-width:560px){
+      .person-info{flex:0 0 115px}
+      .person-name{font-size:12px}
+      .person-info h3{font-size:14px}
+    }
+
+  </style>
 </head>
 <body>
   <div class="nav-wrap"><div class="container"><nav>
@@ -207,7 +217,11 @@
       <div class="portfolio"><article class="project"><div class="project-visual"><img src="assets/web-application.webp" alt="Ilustrasi dashboard aplikasi web pada laptop"></div><div class="project-content"><span class="label">WEB APPLICATION</span><h3>Platform Bisnis Digital</h3><p>Pengembangan sistem berbasis web untuk mengelola layanan dan transaksi.</p><div class="project-note">Contoh kategori proyek</div></div></article><article class="project"><div class="project-visual"><img src="assets/marketplace.webp" alt="Ilustrasi marketplace dengan keranjang belanja dan aplikasi ponsel"></div><div class="project-content"><span class="label">MARKETPLACE</span><h3>Ekosistem Marketplace</h3><p>Platform yang menghubungkan pelanggan, merchant, dan penyedia layanan.</p><div class="project-note">Contoh kategori proyek</div></div></article><article class="project"><div class="project-visual"><img src="assets/ai-automation.webp" alt="Ilustrasi kecerdasan buatan dan robot otomasi"></div><div class="project-content"><span class="label">AI SOLUTION</span><h3>Otomasi Berbasis AI</h3><p>Solusi otomatisasi untuk membantu proses kerja dan interaksi pelanggan.</p><div class="project-note">Contoh kategori proyek</div></div></article></div>
     </div></section>
     <section id="tim"><div class="container"><div class="section-head"><span class="kicker">People behind DDA</span><h2>Tim yang membangun bersama Anda.</h2><p>Kenali orang-orang di balik DDA. Foto dan profil resmi tim akan ditambahkan setelah materi tersedia.</p></div>
-      <div class="team"><article class="person"><div class="avatar"><img src="assets/team-ceo.png" alt="CEO DDA"></div><h3>Chief Executive Officer</h3><p>Kepemimpinan, strategi, dan pengembangan bisnis.</p></article><article class="person"><div class="avatar"><img src="assets/team-it.png" alt="Tim IT & Development DDA"></div><h3>IT & Development</h3><p>Arsitektur teknologi dan pengembangan produk digital.</p></article><article class="person"><div class="avatar"><img src="assets/team-marketing.png" alt="Tim Marketing DDA"></div><h3>Marketing Team</h3><p>Pemasaran, hubungan pelanggan, dan kemitraan.</p></article></div>
+      <div class="team">
+        <article class="person"><div class="avatar"><img src="assets/team-ceo.png" alt="Mr. Suyoto — CEO DDA"></div><div class="person-info"><div class="person-name">Mr. Suyoto</div><h3>Chief Executive Officer</h3></div><p>Kepemimpinan, strategi, dan pengembangan bisnis.</p></article>
+        <article class="person"><div class="avatar"><img src="assets/team-it.png" alt="Mr. Hadinata — IT & Development"></div><div class="person-info"><div class="person-name">Mr. Hadinata</div><h3>IT & Development</h3></div><p>Arsitektur teknologi dan pengembangan produk digital.</p></article>
+        <article class="person"><div class="avatar"><img src="assets/team-marketing.png" alt="Mr. Qadri — Marketing Team"></div><div class="person-info"><div class="person-name">Mr. Qadri</div><h3>Marketing Team</h3></div><p>Pemasaran, hubungan pelanggan, dan kemitraan.</p></article>
+      </div>
     </div></section>
     <section id="mitra"><div class="container"><div class="partner"><div><span class="kicker">DDA Partner Network</span><h2 style="font:700 32px 'Space Grotesk';margin:10px 0">Perluas peluang bersama DDA.</h2><p style="color:var(--muted);font-size:14px">Bantu hubungkan calon pelanggan dengan layanan DDA. Mitra memperoleh komisi berdasarkan proyek yang berhasil dan ketentuan kerja sama yang disepakati.</p><div class="form-card" style="text-align:left;margin-top:22px;max-width:620px">
 <form class="dda-form" id="partnerApplyForm">
