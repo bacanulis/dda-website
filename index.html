@@ -43,6 +43,14 @@
     @media(max-width:560px){.container{width:min(var(--max),calc(100% - 30px))}.service{padding:17px;gap:13px}.service-icon{width:48px;height:48px;border-radius:14px;font-size:22px}.op-art{width:88px;min-height:135px;font-size:34px}.op-body{padding:14px}.person{padding:16px;gap:14px}.avatar{width:56px;height:56px;border-radius:16px;font-size:17px}.project-visual{height:145px}.services,.op-grid,.portfolio,.team{grid-template-columns:1fr}.hero h1{font-size:43px}.hero p{font-size:15px}.visual{min-height:280px}.orb{width:235px}.orb-core{font-size:70px}.fc1{right:-2px;top:15px}.fc2{left:-2px;bottom:15px}.fc3{right:0;bottom:0}.commission b{font-size:21px}.partner{padding:24px}.hero-actions .btn{width:100%}}
 
 
+
+    /* Rapikan label tier komisi agar sejajar dan tidak terpecah */
+    .commission{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
+    .commission div{min-width:0;padding:17px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+    .commission b{line-height:1.05;margin:0}
+    .commission small{display:block;font-size:clamp(9px,0.78vw,11px);line-height:1.25;white-space:nowrap;letter-spacing:-.025em}
+    @media(max-width:560px){.commission{gap:7px}.commission div{padding:13px 4px}.commission small{font-size:9px;letter-spacing:-.04em}}
+
     /* Purpose-built opportunity illustrations */
     .op-art{width:170px;min-width:170px;min-height:190px;background:radial-gradient(circle at 50% 45%,#2858b966,transparent 62%),linear-gradient(145deg,#153d70,#151b49);display:grid;place-items:center;color:#a7d7ff}
     .op-art svg{width:88%;height:auto;max-height:155px;overflow:visible;filter:drop-shadow(0 8px 14px #168bff44)}
