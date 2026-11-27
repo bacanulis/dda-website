@@ -42,6 +42,14 @@
     @media(max-width:850px){.nav-links{display:none;position:absolute;top:76px;left:0;right:0;background:#09172d;padding:20px;flex-direction:column;align-items:flex-start;border-bottom:1px solid var(--line)}.nav-links.open{display:flex}.menu-btn{display:block}.nav-cta{display:none}.hero-grid,.split,.partner{grid-template-columns:1fr}.hero{padding:65px 0 55px}.visual{min-height:320px}.services,.op-grid,.portfolio,.team{grid-template-columns:repeat(2,1fr)}.trust-row{justify-content:center;text-align:center}.section-head{margin-bottom:28px}section{padding:65px 0}}
     @media(max-width:560px){.container{width:min(var(--max),calc(100% - 30px))}.service{padding:17px;gap:13px}.service-icon{width:48px;height:48px;border-radius:14px;font-size:22px}.op-art{width:88px;min-height:135px;font-size:34px}.op-body{padding:14px}.person{padding:16px;gap:14px}.avatar{width:56px;height:56px;border-radius:16px;font-size:17px}.project-visual{height:145px}.services,.op-grid,.portfolio,.team{grid-template-columns:1fr}.hero h1{font-size:43px}.hero p{font-size:15px}.visual{min-height:280px}.orb{width:235px}.orb-core{font-size:70px}.fc1{right:-2px;top:15px}.fc2{left:-2px;bottom:15px}.fc3{right:0;bottom:0}.commission b{font-size:21px}.partner{padding:24px}.hero-actions .btn{width:100%}}
 
+
+    /* Purpose-built opportunity illustrations */
+    .op-art{width:170px;min-width:170px;min-height:190px;background:radial-gradient(circle at 50% 45%,#2858b966,transparent 62%),linear-gradient(145deg,#153d70,#151b49);display:grid;place-items:center;color:#a7d7ff}
+    .op-art svg{width:88%;height:auto;max-height:155px;overflow:visible;filter:drop-shadow(0 8px 14px #168bff44)}
+    .op-card{min-height:190px}
+    @media(max-width:850px){.op-art{width:112px;min-width:112px;min-height:145px}.op-art svg{width:94%;max-height:125px}}
+    @media(max-width:560px){.op-art{width:88px;min-width:88px;min-height:135px}.op-art svg{width:96%;max-height:112px}}
+
     /* DDA visual identity refresh */
     .brand-mark{width:52px;height:52px;border-radius:0;background:transparent;box-shadow:none;display:grid;place-items:center;overflow:visible}
     .brand-mark svg{width:100%;height:100%;filter:drop-shadow(0 5px 15px #168bff66)}
@@ -260,9 +268,48 @@
 
     <section class="opportunities" id="peluang"><div class="container"><div class="section-head"><span class="kicker">Digital venture opportunities</span><h2>Punya modal? Temukan peluang di dunia digital.</h2><p>DDA membantu calon mitra dan investor mengeksplorasi ide bisnis digital, menyusun kebutuhan pengembangan, serta membuat proyeksi berdasarkan asumsi yang transparan.</p></div>
       <div class="op-grid">
-        <article class="op-card"><div class="op-art">▦</div><div class="op-body"><span class="tag">PLATFORM DIGITAL</span><h3>Marketplace Niche</h3><p>Platform untuk mempertemukan penjual dan pembeli dalam segmen pasar tertentu.</p></div></article>
-        <article class="op-card"><div class="op-art">✧</div><div class="op-body"><span class="tag">SOFTWARE AS A SERVICE</span><h3>AI & SaaS Platform</h3><p>Produk perangkat lunak dengan model berlangganan untuk kebutuhan bisnis.</p></div></article>
-        <article class="op-card"><div class="op-art">⌁</div><div class="op-body"><span class="tag">DIGITAL SERVICES</span><h3>Platform Layanan</h3><p>Solusi pemesanan dan pengelolaan layanan untuk pasar yang spesifik.</p></div></article>
+        <article class="op-card"><div class="op-art op-art-market" aria-hidden="true">
+          <svg viewBox="0 0 120 120" role="img">
+            <path d="M22 48h76l-7-22H29z" fill="#273f9b" stroke="#63dfff" stroke-width="2.5"/>
+            <path d="M22 48h76v8H22z" fill="#142c68" stroke="#63dfff" stroke-width="2"/>
+            <path d="M30 27h60l7 21H23z" fill="#7c42e8" stroke="#8feaff" stroke-width="2"/>
+            <path d="M34 29v18m15-18v18m15-18v18m15-18v18" stroke="#d6c8ff" stroke-width="5"/>
+            <rect x="31" y="57" width="58" height="43" rx="5" fill="#0b1d42" stroke="#45caff" stroke-width="2.5"/>
+            <path d="M43 69h8l5 7h18l6-7h-7" fill="none" stroke="#67e5ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="53" cy="88" r="4" fill="#a66aff"/><circle cx="74" cy="88" r="4" fill="#42dfff"/>
+            <path d="M13 78h15v22H13z" fill="#176ed2" stroke="#5ce5ff" stroke-width="2"/>
+            <path d="M92 78h16v22H92z" fill="#8c3fe8" stroke="#c28aff" stroke-width="2"/>
+          </svg>
+        </div><div class="op-body"><span class="tag">PLATFORM DIGITAL</span><h3>Marketplace Niche</h3><p>Platform untuk mempertemukan penjual dan pembeli dalam segmen pasar tertentu.</p></div></article>
+        <article class="op-card"><div class="op-art op-art-ai" aria-hidden="true">
+          <svg viewBox="0 0 120 120" role="img">
+            <rect x="32" y="35" width="56" height="55" rx="12" fill="#172d72" stroke="#42d9ff" stroke-width="3"/>
+            <rect x="40" y="43" width="40" height="39" rx="8" fill="#10204d" stroke="#8d65ff" stroke-width="2"/>
+            <text x="60" y="69" text-anchor="middle" font-size="20" font-weight="700" fill="#8beaff">AI</text>
+            <g stroke="#51dfff" stroke-width="2.5" stroke-linecap="round">
+              <path d="M45 27v8m15-12v12m15-8v8M45 90v9m15-9v13m15-13v9M24 49h8m-8 17h8m56-17h8m-8 17h8"/>
+            </g>
+            <path d="M18 28c0-7 6-12 13-10 4-10 20-8 22 3 8 1 10 13 2 17H28c-6 0-10-4-10-10z" fill="#1b4d9c" stroke="#65dfff" stroke-width="2"/>
+            <path d="M79 17h26v25H79z" rx="4" fill="#24215f" stroke="#a276ff" stroke-width="2"/>
+            <path d="M85 27l5-5 5 5-5 5m8-5h3" fill="none" stroke="#b5a0ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <ellipse cx="96" cy="83" rx="12" ry="5" fill="#5b49ca" stroke="#78e5ff" stroke-width="2"/>
+            <path d="M84 83v17c0 7 24 7 24 0V83" fill="#243e91" stroke="#78e5ff" stroke-width="2"/>
+            <path d="M84 91c0 7 24 7 24 0" fill="none" stroke="#78e5ff" stroke-width="1.5"/>
+          </svg>
+        </div><div class="op-body"><span class="tag">SOFTWARE AS A SERVICE</span><h3>AI & SaaS Platform</h3><p>Produk perangkat lunak dengan model berlangganan untuk kebutuhan bisnis.</p></div></article>
+        <article class="op-card"><div class="op-art op-art-service" aria-hidden="true">
+          <svg viewBox="0 0 120 120" role="img">
+            <rect x="27" y="31" width="66" height="68" rx="8" fill="#14275b" stroke="#55dfff" stroke-width="2.5"/>
+            <rect x="35" y="41" width="50" height="49" rx="4" fill="#0a1b3b" stroke="#6f76ff" stroke-width="1.8"/>
+            <path d="M43 53h34M43 61h24" stroke="#52dfff" stroke-width="2" stroke-linecap="round"/>
+            <path d="M45 73l7 7 14-15" fill="none" stroke="#9c78ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="67" y="13" width="35" height="31" rx="7" fill="#282269" stroke="#ad7cff" stroke-width="2"/>
+            <path d="M76 13v-5m17 5v-5M75 23h19M79 30l5 5 9-10" fill="none" stroke="#d2c3ff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="22" cy="58" r="13" fill="#164c91" stroke="#61e3ff" stroke-width="2"/>
+            <path d="M16 59v-4a6 6 0 0 1 12 0v4m-12 0v5h4m8-5v5h-4" fill="none" stroke="#a5f1ff" stroke-width="2" stroke-linecap="round"/>
+            <path d="M78 78l7 7m-5-12a9 9 0 0 0 12 12l-6 6-5-5-6 6-5-5 6-6a9 9 0 0 0 2-13z" fill="#704be0" stroke="#b99aff" stroke-width="1.8"/>
+          </svg>
+        </div><div class="op-body"><span class="tag">DIGITAL SERVICES</span><h3>Platform Layanan</h3><p>Solusi pemesanan dan pengelolaan layanan untuk pasar yang spesifik.</p></div></article>
       </div><p class="project-note">Setiap peluang perlu melalui kajian pasar, perhitungan biaya, validasi model bisnis, dan analisis risiko. Proyeksi bukan jaminan keuntungan.</p>
 
       <div class="form-card" style="margin-top:22px">
